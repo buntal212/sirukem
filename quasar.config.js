@@ -3,29 +3,22 @@
 
 import { defineConfig } from '#q-app'
 
-export default defineConfig(() => {
+export default defineConfig((ctx) => {
   return {
     // =========================================================
     // BOOT FILES
     // =========================================================
-    boot: [
-      'axios',
-    ],
+    boot: ['axios'],
 
     // =========================================================
     // CSS
     // =========================================================
-    css: [
-      'app.scss',
-    ],
+    css: ['app.scss'],
 
     // =========================================================
     // EXTRAS
     // =========================================================
-    extras: [
-      'roboto-font',
-      'material-icons',
-    ],
+    extras: ['roboto-font', 'material-icons'],
 
     // =========================================================
     // BUILD
@@ -36,15 +29,29 @@ export default defineConfig(() => {
         // node: 'node22'
       },
 
+      // ---------------------------------------------------------
+      // ENVIRONMENT
+      // .env             = selalu dibaca Quasar
+      // .env.production  = tambahan khusus production build
+      // ---------------------------------------------------------
+      env: {
+        file: ctx.prod ? ['.env.production'] : [],
+      },
+
+      // ---------------------------------------------------------
+      // VUE ROUTER
+      // ---------------------------------------------------------
       vueRouterMode: 'history',
 
+      // ---------------------------------------------------------
+      // VITE PLUGINS
+      // ---------------------------------------------------------
       vitePlugins: [
         [
           'vite-plugin-checker',
           {
             eslint: {
-              lintCommand:
-                'eslint -c ./eslint.config.js "./src/**/*.{js,mjs,cjs,vue}"',
+              lintCommand: 'eslint -c ./eslint.config.js "./src/**/*.{js,mjs,cjs,vue}"',
 
               useFlatConfig: true,
             },
@@ -70,9 +77,7 @@ export default defineConfig(() => {
     framework: {
       config: {},
 
-      plugins: [
-        'Notify',
-      ],
+      plugins: ['Notify'],
     },
 
     // =========================================================
@@ -86,9 +91,7 @@ export default defineConfig(() => {
     ssr: {
       prodPort: 3000,
 
-      middlewares: [
-        'render',
-      ],
+      middlewares: ['render'],
     },
 
     // =========================================================
@@ -119,9 +122,7 @@ export default defineConfig(() => {
     // ELECTRON
     // =========================================================
     electron: {
-      preloadScripts: [
-        'electron-preload',
-      ],
+      preloadScripts: ['electron-preload'],
 
       inspectPort: 5858,
 
