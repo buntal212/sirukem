@@ -13,7 +13,7 @@ jobs:
 
     steps:
       # =========================
-      # 1. Checkout source code
+      # 1. Checkout
       # =========================
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -53,7 +53,7 @@ jobs:
             "${{ secrets.SERVER_HOST }}" >> ~/.ssh/known_hosts
 
       # =========================
-      # 6. Upload hasil build
+      # 6. Upload ke temporary
       # =========================
       - name: Upload PWA to temporary directory
         run: |
@@ -74,6 +74,7 @@ jobs:
           ssh -p "${{ secrets.SERVER_PORT }}" \
             "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
             "sudo rsync -a --delete \
+              --chown=www:www \
               --exclude='.user.ini' \
               --exclude='.well-known/' \
               --exclude='.htaccess' \
@@ -81,7 +82,6 @@ jobs:
               --exclude='502.html' \
               /tmp/rowo-pwa-deploy/ \
               /www/wwwroot/rowo.udumbara.my.id/ \
-              && sudo chown -R www:www /www/wwwroot/rowo.udumbara.my.id \
               && rm -rf /tmp/rowo-pwa-deploy"
 
       # =========================
