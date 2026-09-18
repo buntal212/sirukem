@@ -7,6 +7,11 @@
 </template>
 
 <script setup>
-// Layout sengaja dibuat bersih.
-// Tidak ada header Quasar dan tidak ada hamburger menu.
+// Layout khusus halaman autentikasi
 </script>
+
+<style scoped>
+.q-layout {
+  min-height: 100vh;
+}
+</style>
