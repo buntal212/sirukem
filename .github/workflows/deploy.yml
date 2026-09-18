@@ -1,0 +1,91 @@
+name: Deploy Rowo PWA
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Build & Deploy PWA
+    runs-on: ubuntu-latest
+
+    steps:
+      # =========================
+      # 1. Checkout source code
+      # =========================
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # =========================
+      # 2. Setup Node.js
+      # =========================
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # =========================
+      # 3. Install dependencies
+      # =========================
+      - name: Install dependencies
+        run: npm ci
+
+      # =========================
+      # 4. Build Quasar PWA
+      # =========================
+      - name: Build Quasar PWA
+        run: npx quasar build -m pwa
+
+      # =========================
+      # 5. Setup SSH
+      # =========================
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          ssh-keyscan -p "${{ secrets.SERVER_PORT }}" \
+            "${{ secrets.SERVER_HOST }}" >> ~/.ssh/known_hosts
+
+      # =========================
+      # 6. Upload hasil build
+      # =========================
+      - name: Upload PWA to temporary directory
+        run: |
+          ssh -p "${{ secrets.SERVER_PORT }}" \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
+            "rm -rf /tmp/rowo-pwa-deploy && mkdir -p /tmp/rowo-pwa-deploy"
+
+          rsync -az --delete \
+            -e "ssh -p ${{ secrets.SERVER_PORT }}" \
+            dist/pwa/ \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/rowo-pwa-deploy/"
+
+      # =========================
+      # 7. Deploy ke aaPanel
+      # =========================
+      - name: Deploy to aaPanel web root
+        run: |
+          ssh -p "${{ secrets.SERVER_PORT }}" \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
+            "sudo rsync -a --delete \
+              --exclude='.user.ini' \
+              --exclude='.well-known/' \
+              --exclude='.htaccess' \
+              --exclude='404.html' \
+              --exclude='502.html' \
+              /tmp/rowo-pwa-deploy/ \
+              /www/wwwroot/rowo.udumbara.my.id/ \
+              && sudo chown -R www:www /www/wwwroot/rowo.udumbara.my.id \
+              && rm -rf /tmp/rowo-pwa-deploy"
+
+      # =========================
+      # 8. Finish
+      # =========================
+      - name: Deployment completed
+        run: echo "Rowo PWA deployment completed successfully."
