@@ -1,3 +1,5 @@
+import pendudukRoutes from './modules/penduduk'
+
 const routes = [
   {
     path: '/login',
@@ -21,6 +23,7 @@ const routes = [
     children: [
       { path: '', component: () => import('@/pages/IndexPage.vue') },
       { path: 'second', component: () => import('@/pages/SecondPage.vue') },
+       ...pendudukRoutes,
     ],
   },
 

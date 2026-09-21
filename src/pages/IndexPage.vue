@@ -263,15 +263,6 @@ const currentYear = computed(() => {
 
 const menus = [
   {
-    title: 'Dashboard',
-    description: 'Beranda & Ringkasan Informasi',
-    icon: 'home',
-    route: '/',
-    color: '#1565c0',
-    background: '#e3f2fd',
-  },
-
-  {
     title: 'Penduduk',
     description: 'Data Penduduk Desa Rowo',
     icon: 'groups',

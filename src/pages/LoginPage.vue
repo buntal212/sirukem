@@ -1,7 +1,7 @@
-```vue
 <template>
   <q-page class="login-page">
     <div class="login-container">
+
       <!-- BRANDING -->
       <div class="brand-section">
         <div class="logo-wrapper">
@@ -9,19 +9,18 @@
         </div>
 
         <div class="app-title">DESA ROWO LECES</div>
-
         <div class="app-subtitle">Sistem Informasi Desa</div>
       </div>
 
       <!-- WELCOME -->
       <div class="welcome-section">
         <div class="welcome-title">Selamat Datang</div>
-
         <div class="welcome-subtitle">Silakan login untuk melanjutkan</div>
       </div>
 
       <!-- FORM -->
       <q-form class="login-form" @submit.prevent="login">
+
         <!-- USERNAME -->
         <q-input
           v-model="form.username"
@@ -31,7 +30,7 @@
           label-color="white"
           label="Username"
           autocomplete="username"
-          class="login-input"
+          class="login-input input-username"
         >
           <template #prepend>
             <q-icon name="person_outline" color="white" />
@@ -48,7 +47,7 @@
           label="Password"
           :type="showPassword ? 'text' : 'password'"
           autocomplete="current-password"
-          class="login-input q-mt-md"
+          class="login-input input-password q-mt-md"
         >
           <template #prepend>
             <q-icon name="lock_outline" color="white" />
@@ -86,14 +85,15 @@
           :loading="loading"
           label="Login"
         />
+
       </q-form>
 
       <!-- FOOTER -->
       <div class="footer">
         <div>© {{ currentYear }} Desa Rowo Leces</div>
-
         <div class="footer-company">CV. UDUMBARA INFORMATIKA</div>
       </div>
+
     </div>
   </q-page>
 </template>
@@ -186,7 +186,7 @@ const login = async () => {
 
 const forgotPassword = () => {
   $q.notify({
-    message: 'Silakan hubungi administrator Desa R﻿owo Leces',
+    message: 'Silakan hubungi administrator Desa Rowo Leces',
     position: 'top',
   })
 }
@@ -199,9 +199,22 @@ const forgotPassword = () => {
   overflow: hidden;
 
   background:
-    radial-gradient(circle at 85% 15%, rgba(38, 117, 255, 0.45) 0%, rgba(38, 117, 255, 0) 32%),
-    radial-gradient(circle at 10% 90%, rgba(0, 180, 255, 0.22) 0%, rgba(0, 180, 255, 0) 35%),
-    linear-gradient(160deg, #083a98 0%, #052f82 45%, #031d59 100%);
+    radial-gradient(
+      circle at 85% 15%,
+      rgba(38, 117, 255, 0.45) 0%,
+      rgba(38, 117, 255, 0) 32%
+    ),
+    radial-gradient(
+      circle at 10% 90%,
+      rgba(0, 180, 255, 0.22) 0%,
+      rgba(0, 180, 255, 0) 35%
+    ),
+    linear-gradient(
+      160deg,
+      #083a98 0%,
+      #052f82 45%,
+      #031d59 100%
+    );
 
   display: flex;
   justify-content: center;
@@ -215,7 +228,10 @@ const forgotPassword = () => {
   display: flex;
   flex-direction: column;
 
-  padding: max(38px, env(safe-area-inset-top)) 28px max(22px, env(safe-area-inset-bottom));
+  padding:
+    max(38px, env(safe-area-inset-top))
+    28px
+    max(22px, env(safe-area-inset-bottom));
 
   color: white;
 }
@@ -227,6 +243,9 @@ const forgotPassword = () => {
 .brand-section {
   text-align: center;
   padding-top: 4vh;
+
+  /* ANIMASI TAMBAHAN */
+  animation: brandMasuk 0.7s ease-out both;
 }
 
 .logo-wrapper {
@@ -246,6 +265,9 @@ const forgotPassword = () => {
   box-shadow:
     0 14px 35px rgba(0, 0, 0, 0.2),
     inset 0 1px 1px rgba(255, 255, 255, 0.25);
+
+  /* ANIMASI TAMBAHAN */
+  animation: logoMelayang 4s ease-in-out 0.7s infinite;
 }
 
 .app-title {
@@ -272,6 +294,9 @@ const forgotPassword = () => {
 
   margin-top: 55px;
   margin-bottom: 32px;
+
+  /* ANIMASI TAMBAHAN */
+  animation: munculDariBawah 0.65s ease-out 0.15s both;
 }
 
 .welcome-title {
@@ -324,6 +349,16 @@ const forgotPassword = () => {
   padding-right: 12px;
 }
 
+/* ANIMASI TAMBAHAN */
+
+.input-username {
+  animation: munculDariBawah 0.6s ease-out 0.3s both;
+}
+
+.input-password {
+  animation: munculDariBawah 0.6s ease-out 0.4s both;
+}
+
 /* =====================================
    FORGOT PASSWORD
 ===================================== */
@@ -334,6 +369,9 @@ const forgotPassword = () => {
 
   margin-top: 8px;
   margin-bottom: 18px;
+
+  /* ANIMASI TAMBAHAN */
+  animation: munculDariBawah 0.6s ease-out 0.5s both;
 }
 
 .forgot-btn {
@@ -357,10 +395,22 @@ const forgotPassword = () => {
   font-weight: 800;
 
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+
+  /* ANIMASI TAMBAHAN */
+  animation: munculDariBawah 0.6s ease-out 0.6s both;
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
 }
 
 .login-btn:hover {
   background: #f5f8ff;
+}
+
+.login-btn:active {
+  transform: scale(0.98);
 }
 
 /* =====================================
@@ -377,6 +427,9 @@ const forgotPassword = () => {
   font-size: 11px;
 
   color: rgba(255, 255, 255, 0.55);
+
+  /* ANIMASI TAMBAHAN */
+  animation: munculPerlahan 0.8s ease-out 0.75s both;
 }
 
 .footer-company {
@@ -384,6 +437,7 @@ const forgotPassword = () => {
 
   font-size: 11px;
   font-weight: 700;
+
   letter-spacing: 0.7px;
 
   color: rgba(255, 255, 255, 0.8);
@@ -401,6 +455,7 @@ const forgotPassword = () => {
   .logo-wrapper {
     width: 68px;
     height: 68px;
+
     border-radius: 20px;
   }
 
@@ -444,5 +499,75 @@ const forgotPassword = () => {
     max-height: 900px;
   }
 }
+
+/* =====================================
+   ANIMASI
+===================================== */
+
+/* Branding turun lembut dari atas */
+@keyframes brandMasuk {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Komponen naik lembut dari bawah */
+@keyframes munculDariBawah {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Logo bergerak pelan */
+@keyframes logoMelayang {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Footer fade in */
+@keyframes munculPerlahan {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Jika user menonaktifkan animasi di device */
+@media (prefers-reduced-motion: reduce) {
+  .brand-section,
+  .logo-wrapper,
+  .welcome-section,
+  .input-username,
+  .input-password,
+  .forgot-wrapper,
+  .login-btn,
+  .footer {
+    animation: none !important;
+  }
+
+  .login-btn {
+    transition: none !important;
+  }
+}
 </style>
-```
