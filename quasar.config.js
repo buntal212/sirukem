@@ -104,6 +104,10 @@ export default defineConfig((ctx) => {
     // =========================================================
     pwa: {
       workboxMode: 'GenerateSW',
+      workboxOptions: {
+        clientsClaim: true,
+        skipWaiting: true,
+      },
     },
 
     // =========================================================

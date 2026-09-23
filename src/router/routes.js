@@ -1,4 +1,6 @@
+import iuranrukemRoutes from './modules/iuranrukem'
 import pendudukRoutes from './modules/penduduk'
+import pengaturanRoutes from './modules/pengaturan'
 
 const routes = [
   {
@@ -24,6 +26,8 @@ const routes = [
       { path: '', component: () => import('@/pages/IndexPage.vue') },
       { path: 'second', component: () => import('@/pages/SecondPage.vue') },
        ...pendudukRoutes,
+       ...pengaturanRoutes,
+       ...iuranrukemRoutes,
     ],
   },
 

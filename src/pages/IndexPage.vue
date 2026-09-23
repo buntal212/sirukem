@@ -85,6 +85,84 @@
         </div>
       </div>
 
+      <!-- ===================================================
+          RINGKASAN SALDO
+      ==================================================== -->
+      <div class="balance-section">
+
+        <!-- SALDO RUKEM -->
+        <q-card flat class="balance-card balance-rukem">
+          <q-card-section class="balance-content">
+            <div class="balance-icon">
+              <q-icon name="account_balance_wallet" />
+            </div>
+
+            <div class="balance-info">
+              <div class="balance-label">
+                Saldo RUKEM
+              </div>
+
+              <div class="balance-value">
+                Rp {{ formatRupiah(saldoRukem) }}
+              </div>
+
+              <div class="balance-description">
+                Kas Rukun Kematian
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+
+
+        <!-- SALDO KOTAK MASJID -->
+        <q-card flat class="balance-card balance-masjid">
+          <q-card-section class="balance-content">
+            <div class="balance-icon">
+              <q-icon name="mosque" />
+            </div>
+
+            <div class="balance-info">
+              <div class="balance-label">
+                Kotak Masjid
+              </div>
+
+              <div class="balance-value">
+                Rp {{ formatRupiah(saldoMasjid) }}
+              </div>
+
+              <div class="balance-description">
+                Saldo Kotak Masjid
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+
+
+        <!-- SALDO BANTUAN -->
+        <q-card flat class="balance-card balance-bantuan">
+          <q-card-section class="balance-content">
+            <div class="balance-icon">
+              <q-icon name="volunteer_activism" />
+            </div>
+
+            <div class="balance-info">
+              <div class="balance-label">
+                Saldo Bantuan
+              </div>
+
+              <div class="balance-value">
+                Rp {{ formatRupiah(saldoBantuan) }}
+              </div>
+
+              <div class="balance-description">
+                Dana Bantuan Sosial
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+
+      </div>
+
 
       <!-- ===================================================
            MENU GRID
@@ -256,6 +334,18 @@ const currentYear = computed(() => {
   return new Date().getFullYear()
 })
 
+// =========================================================
+// SALDO
+// =========================================================
+
+const saldoRukem = ref(12500000)
+const saldoMasjid = ref(8750000)
+const saldoBantuan = ref(4250000)
+
+const formatRupiah = (value) => {
+  return new Intl.NumberFormat('id-ID').format(value || 0)
+}
+
 
 // =========================================================
 // MENU
@@ -269,6 +359,15 @@ const menus = [
     route: '/penduduk',
     color: '#00897b',
     background: '#e0f2f1',
+  },
+
+  {
+    title: 'Iuran Warga',
+    description: 'Data Iuran Wrga',
+    icon: 'account_balance_wallet',
+    route: '/iuranrukem',
+    color: '#7e57c2',
+    background: '#ede7f6',
   },
 
   {
@@ -289,14 +388,7 @@ const menus = [
     background: '#fff3e0',
   },
 
-  {
-    title: 'Keuangan',
-    description: 'Data Keuangan Desa',
-    icon: 'account_balance_wallet',
-    route: '/keuangan',
-    color: '#7e57c2',
-    background: '#ede7f6',
-  },
+
 
   {
     title: 'Pengaturan',
@@ -1059,6 +1151,180 @@ const logout = async () => {
 
   .menu-description {
     font-size: 10px;
+  }
+}
+
+/* =========================================================
+   BALANCE / SALDO
+========================================================= */
+
+.balance-section {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 25px;
+}
+
+.balance-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  color: white;
+  min-height: 135px;
+  box-shadow: 0 8px 22px rgba(23, 76, 130, 0.12);
+}
+
+.balance-card::after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  right: -30px;
+  bottom: -40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.balance-rukem {
+  background: linear-gradient(
+    135deg,
+    #00897b,
+    #26a69a
+  );
+}
+
+.balance-masjid {
+  background: linear-gradient(
+    135deg,
+    #1565c0,
+    #42a5f5
+  );
+}
+
+.balance-bantuan {
+  background: linear-gradient(
+    135deg,
+    #ef6c00,
+    #ffa726
+  );
+}
+
+.balance-content {
+  position: relative;
+  z-index: 2;
+  padding: 18px;
+}
+
+.balance-icon {
+  width: 42px;
+  height: 42px;
+  margin-bottom: 13px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(5px);
+}
+
+.balance-icon .q-icon {
+  font-size: 24px;
+}
+
+.balance-label {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.balance-value {
+  margin-top: 3px;
+  font-size: 21px;
+  line-height: 1.2;
+  font-weight: 800;
+}
+
+.balance-description {
+  margin-top: 7px;
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+
+/* =========================================================
+   BALANCE MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .balance-section {
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .balance-card {
+    min-height: 125px;
+    border-radius: 14px;
+  }
+
+  .balance-content {
+    padding: 12px 10px;
+  }
+
+  .balance-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+  }
+
+  .balance-icon .q-icon {
+    font-size: 20px;
+  }
+
+  .balance-label {
+    font-size: 10px;
+  }
+
+  .balance-value {
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .balance-description {
+    font-size: 9px;
+    line-height: 1.2;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 360px) {
+
+  .balance-section {
+    gap: 6px;
+  }
+
+  .balance-content {
+    padding: 10px 7px;
+  }
+
+  .balance-value {
+    font-size: 12px;
+  }
+
+  .balance-label {
+    font-size: 9px;
+  }
+
+  .balance-description {
+    display: none;
   }
 }
 </style>
