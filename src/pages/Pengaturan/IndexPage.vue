@@ -45,7 +45,7 @@
 
 
       <!-- =====================================================
-           IURAN BULANAN
+           IURAN TAHUNAN
       ====================================================== -->
 
       <q-card
@@ -66,11 +66,11 @@
           <div class="setting-information">
 
             <div class="setting-title">
-              Iuran Bulanan
+              Iuran Tahunan
             </div>
 
             <div class="setting-description">
-              Atur nominal iuran rutin warga setiap bulan
+              Atur total iuran rutin warga dalam setahun
             </div>
 
           </div>
@@ -164,7 +164,7 @@ const goBack = () => {
 
 
 // =========================================================
-// IURAN BULANAN
+// IURAN TAHUNAN
 // =========================================================
 
 const openIuran = () => {

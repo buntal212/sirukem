@@ -19,11 +19,11 @@
 
         <div class="header-text">
           <div class="header-title">
-            Iuran Mingguan
+            Iuran Tahunan
           </div>
 
           <div class="header-subtitle">
-            Pengaturan nominal iuran RUKEM warga
+            Pengaturan total iuran RUKEM warga per tahun
           </div>
         </div>
 
@@ -58,8 +58,8 @@
             </div>
 
             <div class="info-description">
-              Tentukan nominal iuran rutin yang harus dibayarkan
-              oleh setiap warga setiap minggu.
+              Tentukan total iuran rutin yang harus dibayarkan
+              oleh setiap warga dalam setahun.
             </div>
           </div>
 
@@ -89,7 +89,7 @@
             </div>
 
             <div class="form-subtitle">
-              Atur nominal dan periode iuran mingguan
+              Atur total iuran warga dalam setahun
             </div>
           </div>
 
@@ -103,16 +103,13 @@
         ================================================== -->
         <q-card-section class="form-content">
 
-          <q-form
-            ref="formRef"
-            @submit.prevent="simpan"
-          >
+          <q-form @submit.prevent="simpan">
 
-            <!-- NOMINAL IURAN -->
+            <!-- TOTAL IURAN TAHUNAN -->
             <div class="field-group">
 
               <div class="field-label">
-                Nominal Iuran
+                Total Iuran Dalam Setahun
                 <span class="required">*</span>
               </div>
 
@@ -121,11 +118,8 @@
                 outlined
                 dense
                 prefix="Rp"
-                placeholder="Contoh: 25.000"
+                placeholder="Contoh: 120.000"
                 input-class="text-weight-bold"
-                :rules="[
-                  val => !!val || 'Nominal iuran wajib diisi'
-                ]"
                 @update:model-value="formatNominal"
               >
                 <template #prepend>
@@ -137,7 +131,7 @@
               </q-input>
 
               <div class="field-help">
-                Nominal iuran yang dibayarkan setiap warga per minggu.
+                Total iuran yang dibayarkan setiap warga dalam setahun.
               </div>
 
             </div>
@@ -170,7 +164,7 @@
 
 
                 <div class="preview-small">
-                  Iuran RUKEM / Minggu
+                  Total Iuran RUKEM / Tahun
                 </div>
 
                 <div class="preview-nominal">
@@ -250,7 +244,7 @@
 
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useMiuranStore } from '@/stores/miuran'
@@ -263,9 +257,6 @@ const miuranStore = useMiuranStore()
 
 const router = useRouter()
 const $q = useQuasar()
-
-const formRef = ref(null)
-
 
 // =========================================================
 // FORM
@@ -341,12 +332,6 @@ const goBack = () => {
 // =========================================================
 
 const simpan = async () => {
-  const valid = await formRef.value.validate()
-
-  if (!valid) {
-    return
-  }
-
   try {
     const nominal = Number(
       String(form.nominal).replace(/\./g, '')
@@ -359,7 +344,7 @@ const simpan = async () => {
       position: 'top',
       message:
         response?.message ||
-        'Nominal iuran berhasil disimpan',
+        'Total iuran tahunan berhasil disimpan',
       icon: 'check_circle',
     })
   } catch (error) {
@@ -368,7 +353,7 @@ const simpan = async () => {
       position: 'top',
       message:
         error.response?.data?.message ||
-        'Gagal menyimpan nominal iuran',
+        'Gagal menyimpan total iuran tahunan',
       icon: 'error',
     })
   }
@@ -384,7 +369,7 @@ onMounted(async () => {
       )
     }
   } catch (error) {
-    console.error('Gagal mengambil nominal iuran:', error)
+    console.error('Gagal mengambil total iuran tahunan:', error)
   }
 })
 </script>
@@ -703,11 +688,13 @@ onMounted(async () => {
 
 .field-help {
 
-  margin-top: -10px;
+  margin-top: 6px;
 
   padding-left: 3px;
 
   font-size: 10px;
+
+  line-height: 1.4;
 
   color: #90a4ae;
 }
@@ -1135,4 +1122,3 @@ onMounted(async () => {
 }
 
 </style>
-

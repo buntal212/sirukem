@@ -371,16 +371,7 @@ const menus = [
   },
 
   {
-    title: 'Surat Menyurat',
-    description: 'Layanan Surat Online',
-    icon: 'description',
-    route: '/surat',
-    color: '#00a67e',
-    background: '#e0f7ef',
-  },
-
-  {
-    title: 'Laporan',
+    title: 'Laporan Iuran Warga',
     description: 'Rekapitulasi & Statistik',
     icon: 'bar_chart',
     route: '/laporan',

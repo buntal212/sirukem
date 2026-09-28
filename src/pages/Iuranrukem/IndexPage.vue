@@ -50,29 +50,31 @@
       <ListPage
         v-else-if="page === 'list'"
         :data="store.items"
-        :total="store.total"
         :loading-more="store.loadingMore"
         :has-more="store.hasMore"
         :bulan="bulan"
-        :minggu="minggu"
         :tahun="tahun"
+        @add="openTambah"
         @search="searchIuran"
         @bulan="changeBulan"
-        @minggu="changeMinggu"
         @tahun="changeTahun"
-        @bayar="openBayar"
+        @update="openUpdate"
         @load-more="loadMoreIuran"
         @refresh="refreshIuran"
       />
 
       <!-- FORM PEMBAYARAN -->
       <FormPage
-        v-else-if="page === 'bayar' && selectedWarga"
+        v-else-if="page === 'bayar'"
         :data="selectedWarga"
+        :mode="formMode"
+        :warga-options="store.wargaOptions"
         :bulan="bulan"
-        :minggu="minggu"
         :tahun="tahun"
         :loading="store.saving"
+        :loading-warga="store.loadingWarga"
+        @select-warga="selectWarga"
+        @search-warga="searchWarga"
         @save="savePembayaran"
         @cancel="backToList"
       />
@@ -101,11 +103,11 @@ const store = useIuranStore()
 
 const page = ref('list')
 const selectedWarga = ref(null)
+const formMode = ref('bayar')
 
 const sekarang = new Date()
 
 const bulan = ref(sekarang.getMonth() + 1)
-const minggu = ref(Math.min(Math.ceil(sekarang.getDate() / 7), 4))
 const tahun = ref(sekarang.getFullYear())
 
 // =========================================================
@@ -117,7 +119,11 @@ const pageTitle = computed(() => {
     return 'Iuran Warga'
   }
 
-  return 'Pembayaran Iuran'
+  if (formMode.value === 'tambah') {
+    return 'Tambah Iuran'
+  }
+
+  return formMode.value === 'update' ? 'Update Iuran' : 'Pembayaran Iuran'
 })
 
 // =========================================================
@@ -136,7 +142,6 @@ const getIuran = async () => {
   try {
     await store.getIuran({
       bulan: bulan.value,
-      minggu: minggu.value,
       tahun: tahun.value,
       reset: true,
     })
@@ -165,21 +170,56 @@ const goHome = () => {
 }
 
 // =========================================================
-// OPEN PEMBAYARAN
+// UPDATE IURAN
 // =========================================================
 
-const openBayar = (item) => {
-  if (!item || item.id === undefined || item.id === null) {
+const openUpdate = (item) => {
+  if (!item?.iuran_id) {
     $q.notify({
       type: 'negative',
-      message: 'Data warga tidak valid',
+      message: 'Data iuran tidak ditemukan',
       position: 'top',
     })
     return
   }
 
   selectedWarga.value = item
+  formMode.value = 'update'
   page.value = 'bayar'
+}
+
+// =========================================================
+// TAMBAH IURAN
+// =========================================================
+
+const openTambah = async () => {
+  selectedWarga.value = null
+  formMode.value = 'tambah'
+  page.value = 'bayar'
+
+  try {
+    await store.getWarga()
+  } catch (error) {
+    console.error('GET WARGA UNTUK IURAN ERROR:', error)
+
+    $q.notify({
+      type: 'negative',
+      message: store.error || 'Gagal mengambil data warga',
+      position: 'top',
+    })
+  }
+}
+
+const selectWarga = (warga) => {
+  selectedWarga.value = warga
+}
+
+const searchWarga = async (keyword) => {
+  try {
+    await store.getWarga(keyword)
+  } catch (error) {
+    console.error('CARI WARGA UNTUK IURAN ERROR:', error)
+  }
 }
 
 // =========================================================
@@ -189,6 +229,7 @@ const openBayar = (item) => {
 const backToList = () => {
   page.value = 'list'
   selectedWarga.value = null
+  formMode.value = 'bayar'
 }
 
 // =========================================================
@@ -201,16 +242,6 @@ const changeBulan = async (value) => {
   }
 
   bulan.value = value
-
-  await getIuran()
-}
-
-const changeMinggu = async (value) => {
-  if (!value || value === minggu.value) {
-    return
-  }
-
-  minggu.value = value
 
   await getIuran()
 }
@@ -237,7 +268,6 @@ const searchIuran = async (keyword) => {
   try {
     await store.searchIuran(keyword, {
       bulan: bulan.value,
-      minggu: minggu.value,
       tahun: tahun.value,
     })
   } catch (error) {
@@ -273,9 +303,6 @@ const savePembayaran = async (data) => {
       penduduk_id: selectedWarga.value.id,
 
       bulan: bulan.value,
-
-      minggu: minggu.value,
-
       tahun: tahun.value,
     }
 
@@ -289,7 +316,6 @@ const savePembayaran = async (data) => {
 
     await store.refreshIuran({
       bulan: bulan.value,
-      minggu: minggu.value,
       tahun: tahun.value,
     })
 
@@ -321,7 +347,6 @@ const loadMoreIuran = async (done) => {
 
     await store.loadMore({
       bulan: bulan.value,
-      minggu: minggu.value,
       tahun: tahun.value,
     })
 
@@ -345,7 +370,6 @@ const refreshIuran = async (done) => {
   try {
     await store.refreshIuran({
       bulan: bulan.value,
-      minggu: minggu.value,
       tahun: tahun.value,
     })
   } catch (error) {

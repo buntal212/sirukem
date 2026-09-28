@@ -67,7 +67,7 @@ export const useMiuranStore = defineStore('miuran', {
 
         this.error =
           error.response?.data?.message ||
-          'Gagal menyimpan nominal iuran'
+          'Gagal menyimpan total iuran tahunan'
 
         throw error
       } finally {

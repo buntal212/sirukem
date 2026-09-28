@@ -9,7 +9,7 @@ export const useIuranStore = defineStore('iuran', {
 
     currentPage: 1,
 
-    lastPage: 1,
+    hasNextPage: false,
 
     perPage: 20,
 
@@ -21,13 +21,15 @@ export const useIuranStore = defineStore('iuran', {
 
     saving: false,
 
+    wargaOptions: [],
+
+    loadingWarga: false,
+
     error: null,
   }),
 
   getters: {
-    hasMore: (state) => {
-      return state.currentPage < state.lastPage
-    },
+    hasMore: (state) => state.hasNextPage,
   },
 
   actions: {
@@ -57,8 +59,6 @@ export const useIuranStore = defineStore('iuran', {
 
             bulan: params.bulan,
 
-            minggu: params.minggu,
-
             tahun: params.tahun,
           },
         })
@@ -77,11 +77,11 @@ export const useIuranStore = defineStore('iuran', {
           this.items.push(...rows)
         }
 
-        this.total = Number(result?.total ?? rows.length)
+        this.total = this.items.length
 
         this.currentPage = Number(result?.current_page ?? this.currentPage)
 
-        this.lastPage = Number(result?.last_page ?? 1)
+        this.hasNextPage = Boolean(result?.next_page_url)
 
         return response.data
       } catch (error) {
@@ -152,6 +152,35 @@ export const useIuranStore = defineStore('iuran', {
 
         reset: true,
       })
+    },
+
+    // =====================================================
+    // GET WARGA UNTUK FORM IURAN
+    // =====================================================
+
+    async getWarga(keyword = '') {
+      this.loadingWarga = true
+
+      try {
+        const response = await api.get('/v1/penduduk/getlist', {
+          params: {
+            search: String(keyword || '').trim(),
+            per_page: 100,
+          },
+        })
+
+        this.wargaOptions = response.data?.data ?? []
+
+        return this.wargaOptions
+      } catch (error) {
+        console.error('GET WARGA IURAN ERROR:', error)
+
+        this.error = error.response?.data?.message || 'Gagal mengambil data warga'
+
+        throw error
+      } finally {
+        this.loadingWarga = false
+      }
     },
 
     // =====================================================

@@ -1,6 +1,7 @@
 import iuranrukemRoutes from './modules/iuranrukem'
 import pendudukRoutes from './modules/penduduk'
 import pengaturanRoutes from './modules/pengaturan'
+import laporanRoutes from './modules/laporan'
 
 const routes = [
   {
@@ -28,6 +29,7 @@ const routes = [
        ...pendudukRoutes,
        ...pengaturanRoutes,
        ...iuranrukemRoutes,
+       ...laporanRoutes,
     ],
   },
 

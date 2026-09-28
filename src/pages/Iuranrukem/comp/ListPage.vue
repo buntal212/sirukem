@@ -13,13 +13,13 @@
           <div class="q-ml-sm">
             <div class="text-weight-bold text-subtitle1">Periode Iuran</div>
 
-            <div class="text-caption text-grey-7">Pilih bulan, minggu, dan tahun iuran warga</div>
+            <div class="text-caption text-grey-7">Pilih bulan dan tahun transaksi iuran warga</div>
           </div>
         </div>
 
         <div class="row q-col-gutter-sm">
           <!-- BULAN -->
-          <div class="col-6 col-sm-4">
+          <div class="col-6">
             <q-select
               :model-value="bulan"
               :options="bulanOptions"
@@ -36,26 +36,8 @@
             </q-select>
           </div>
 
-          <!-- MINGGU -->
-          <div class="col-6 col-sm-4">
-            <q-select
-              :model-value="minggu"
-              :options="mingguOptions"
-              outlined
-              dense
-              emit-value
-              map-options
-              label="Minggu"
-              @update:model-value="changeMinggu"
-            >
-              <template #prepend>
-                <q-icon name="date_range" color="primary" />
-              </template>
-            </q-select>
-          </div>
-
           <!-- TAHUN -->
-          <div class="col-12 col-sm-4">
+          <div class="col-6">
             <q-select
               :model-value="tahun"
               :options="tahunOptions"
@@ -72,62 +54,6 @@
         </div>
       </q-card-section>
     </q-card>
-
-    <!-- =====================================================
-         SUMMARY
-    ====================================================== -->
-    <div class="row q-col-gutter-sm q-mb-md">
-      <!-- TOTAL -->
-      <div class="col-4">
-        <q-card flat class="summary-card">
-          <q-card-section class="q-pa-sm text-center">
-            <div class="summary-icon bg-blue-1 text-primary">
-              <q-icon name="groups" />
-            </div>
-
-            <div class="summary-value">
-              {{ total }}
-            </div>
-
-            <div class="summary-label">Warga</div>
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <!-- LUNAS -->
-      <div class="col-4">
-        <q-card flat class="summary-card">
-          <q-card-section class="q-pa-sm text-center">
-            <div class="summary-icon bg-green-1 text-positive">
-              <q-icon name="check_circle" />
-            </div>
-
-            <div class="summary-value text-positive">
-              {{ totalLunas }}
-            </div>
-
-            <div class="summary-label">Lunas</div>
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <!-- BELUM -->
-      <div class="col-4">
-        <q-card flat class="summary-card">
-          <q-card-section class="q-pa-sm text-center">
-            <div class="summary-icon bg-orange-1 text-orange">
-              <q-icon name="schedule" />
-            </div>
-
-            <div class="summary-value text-orange">
-              {{ totalBelum }}
-            </div>
-
-            <div class="summary-label">Belum</div>
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
 
     <!-- =====================================================
          SEARCH
@@ -155,7 +81,7 @@
     ====================================================== -->
     <div class="row items-center justify-between q-mb-sm q-px-xs">
       <div>
-        <div class="text-weight-bold">Iuran Minggu {{ minggu }} {{ namaBulan }} {{ tahun }}</div>
+        <div class="text-weight-bold">Transaksi Iuran {{ namaBulan }} {{ tahun }}</div>
 
         <div class="text-caption text-grey-7">Daftar pembayaran iuran warga</div>
       </div>
@@ -177,7 +103,7 @@
         <div class="text-weight-bold q-mt-md">Data iuran tidak ditemukan</div>
 
         <div class="text-caption text-grey-7 q-mt-xs">
-          Belum ada data Iuran warga pada periode ini
+          Belum ada transaksi pembayaran iuran pada periode ini
         </div>
       </q-card-section>
     </q-card>
@@ -210,20 +136,6 @@
                     </div>
                   </div>
 
-                  <!-- STATUS -->
-                  <q-badge
-                    rounded
-                    :color="isLunas(item) ? 'positive' : 'orange'"
-                    class="status-badge"
-                  >
-                    <q-icon
-                      :name="isLunas(item) ? 'check_circle' : 'schedule'"
-                      size="13px"
-                      class="q-mr-xs"
-                    />
-
-                    {{ isLunas(item) ? 'LUNAS' : 'BELUM BAYAR' }}
-                  </q-badge>
                 </div>
               </div>
             </div>
@@ -236,7 +148,7 @@
             <div class="row items-center justify-between">
               <div>
                 <div class="text-caption text-grey-7">
-                  Iuran Minggu {{ minggu }} {{ namaBulan }} {{ tahun }}
+                  Pembayaran iuran
                 </div>
 
                 <div class="nominal">
@@ -244,40 +156,23 @@
                 </div>
               </div>
 
-              <!-- SUDAH LUNAS -->
-              <div v-if="isLunas(item)" class="text-right">
+              <div class="text-right">
                 <div class="text-caption text-grey-6">Dibayar</div>
 
                 <div class="text-caption text-weight-bold text-positive">
                   {{ formatTanggal(item.tanggal_bayar) }}
                 </div>
-              </div>
 
-              <!-- BELUM BAYAR -->
-              <q-btn
-                v-else
-                unelevated
-                no-caps
-                color="primary"
-                icon="payments"
-                label="Bayar Iuran"
-                class="bayar-btn"
-                @click="$emit('bayar', item)"
-              />
-            </div>
-
-            <!-- =========================
-                 INFO PEMBAYARAN
-            ========================== -->
-            <div v-if="isLunas(item)" class="payment-info q-mt-md">
-              <div class="row items-center">
-                <q-icon name="verified" color="positive" size="18px" />
-
-                <div class="q-ml-sm">
-                  <div class="payment-title">Pembayaran selesai</div>
-
-                  <div class="payment-subtitle">Iuran periode ini telah dibayar</div>
-                </div>
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  color="primary"
+                  icon="edit"
+                  label="Update"
+                  class="q-mt-xs"
+                  @click="$emit('update', item)"
+                />
               </div>
             </div>
           </q-card-section>
@@ -296,8 +191,15 @@
          TOTAL FOOTER
     ====================================================== -->
     <div v-if="data.length > 0" class="text-center text-caption text-grey-6 q-py-md">
-      Menampilkan {{ data.length }} dari {{ total }} warga
+      Menampilkan {{ data.length }} transaksi pembayaran
     </div>
+
+    <!-- TAMBAH IURAN -->
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <q-btn fab icon="add" color="primary" @click="emit('add')">
+        <q-tooltip>Tambah Iuran</q-tooltip>
+      </q-btn>
+    </q-page-sticky>
   </div>
 </template>
 
@@ -312,11 +214,6 @@ const props = defineProps({
   data: {
     type: Array,
     default: () => [],
-  },
-
-  total: {
-    type: Number,
-    default: 0,
   },
 
   loadingMore: {
@@ -334,11 +231,6 @@ const props = defineProps({
     required: true,
   },
 
-  minggu: {
-    type: Number,
-    required: true,
-  },
-
   tahun: {
     type: Number,
     required: true,
@@ -349,7 +241,7 @@ const props = defineProps({
 // EMITS
 // =========================================================
 
-const emit = defineEmits(['search', 'bulan', 'minggu', 'tahun', 'bayar', 'load-more', 'refresh'])
+const emit = defineEmits(['add', 'search', 'bulan', 'tahun', 'update', 'load-more', 'refresh'])
 
 // =========================================================
 // STATE
@@ -376,13 +268,6 @@ const bulanOptions = [
   { label: 'Desember', value: 12 },
 ]
 
-const mingguOptions = [
-  { label: 'Minggu 1', value: 1 },
-  { label: 'Minggu 2', value: 2 },
-  { label: 'Minggu 3', value: 3 },
-  { label: 'Minggu 4', value: 4 },
-]
-
 // =========================================================
 // TAHUN
 // =========================================================
@@ -398,35 +283,6 @@ const tahunOptions = Array.from({ length: 7 }, (_, index) => currentYear - 3 + i
 const namaBulan = computed(() => {
   return bulanOptions.find((item) => item.value === props.bulan)?.label || ''
 })
-
-// =========================================================
-// TOTAL LUNAS
-// =========================================================
-
-const totalLunas = computed(() => {
-  return props.data.filter((item) => isLunas(item)).length
-})
-
-// =========================================================
-// TOTAL BELUM
-// =========================================================
-
-const totalBelum = computed(() => {
-  return Math.max(props.total - totalLunas.value, 0)
-})
-
-// =========================================================
-// STATUS
-// =========================================================
-
-const isLunas = (item) => {
-  return (
-    item.status === 'lunas' ||
-    item.status === 'LUNAS' ||
-    item.lunas === true ||
-    Number(item.lunas) === 1
-  )
-}
 
 // =========================================================
 // NOMINAL
@@ -488,10 +344,6 @@ const changeBulan = (value) => {
   emit('bulan', value)
 }
 
-const changeMinggu = (value) => {
-  emit('minggu', value)
-}
-
 // =========================================================
 // TAHUN
 // =========================================================
@@ -543,53 +395,6 @@ const loadMore = (index, done) => {
   border-radius: 13px;
 
   background: #e8f1ff;
-}
-
-/* =========================================================
-   SUMMARY
-========================================================= */
-
-.summary-card {
-  height: 100%;
-
-  border-radius: 14px;
-
-  background: white;
-
-  border: 1px solid #e9eef5;
-
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
-}
-
-.summary-icon {
-  width: 32px;
-  height: 32px;
-
-  margin: 0 auto 5px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 10px;
-
-  font-size: 18px;
-}
-
-.summary-value {
-  font-size: 18px;
-  line-height: 1.2;
-  font-weight: 800;
-
-  color: #263238;
-}
-
-.summary-label {
-  margin-top: 2px;
-
-  font-size: 10px;
-
-  color: #78909c;
 }
 
 /* =========================================================
@@ -647,20 +452,6 @@ const loadMore = (index, done) => {
 }
 
 /* =========================================================
-   STATUS
-========================================================= */
-
-.status-badge {
-  min-height: 25px;
-
-  padding: 4px 8px;
-
-  font-size: 9px;
-
-  font-weight: 700;
-}
-
-/* =========================================================
    NOMINAL
 ========================================================= */
 
@@ -672,50 +463,6 @@ const loadMore = (index, done) => {
   font-weight: 800;
 
   color: #0d5ac7;
-}
-
-/* =========================================================
-   BAYAR
-========================================================= */
-
-.bayar-btn {
-  min-height: 38px;
-
-  padding: 0 13px;
-
-  border-radius: 10px;
-
-  font-size: 11px;
-
-  font-weight: 700;
-}
-
-/* =========================================================
-   PAYMENT
-========================================================= */
-
-.payment-info {
-  padding: 10px 12px;
-
-  border-radius: 11px;
-
-  background: #f1faf4;
-
-  border: 1px solid #dcefe2;
-}
-
-.payment-title {
-  font-size: 11px;
-
-  font-weight: 700;
-
-  color: #2e7d32;
-}
-
-.payment-subtitle {
-  font-size: 9px;
-
-  color: #78909c;
 }
 
 /* =========================================================

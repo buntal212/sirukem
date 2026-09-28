@@ -5,9 +5,11 @@
         <q-avatar color="primary" text-color="white" icon="payments" size="46px" />
 
         <div class="col q-ml-md">
-          <div class="text-subtitle1 text-weight-bold text-primary">Konfirmasi Pembayaran</div>
+          <div class="text-subtitle1 text-weight-bold text-primary">
+            {{ formTitle }}
+          </div>
           <div class="text-caption text-grey-7">
-            Iuran Minggu {{ minggu }} {{ namaBulan }} {{ tahun }}
+            Iuran {{ namaBulan }} {{ tahun }}
           </div>
         </div>
       </div>
@@ -16,7 +18,36 @@
     <q-separator />
 
     <q-card-section>
-      <div class="warga-info q-mb-lg">
+      <q-select
+        v-if="mode === 'tambah'"
+        :model-value="data?.id ?? null"
+        :options="wargaOptions"
+        :loading="loadingWarga"
+        option-label="nama"
+        option-value="id"
+        emit-value
+        map-options
+        use-input
+        input-debounce="400"
+        outlined
+        dense
+        label="Pilih warga"
+        class="q-mb-lg"
+        @filter="filterWarga"
+        @update:model-value="pilihWarga"
+      >
+        <template #prepend>
+          <q-icon name="person_search" color="primary" />
+        </template>
+
+        <template #no-option>
+          <q-item>
+            <q-item-section class="text-grey-7">Warga tidak ditemukan</q-item-section>
+          </q-item>
+        </template>
+      </q-select>
+
+      <div v-if="data" class="warga-info q-mb-lg">
         <q-icon name="person" color="primary" size="22px" />
 
         <div class="col q-ml-sm">
@@ -26,30 +57,38 @@
         </div>
       </div>
 
-      <div class="periode-info q-mb-lg">
-        <q-icon name="date_range" color="primary" size="22px" />
-
-        <div class="col q-ml-sm">
-          <div class="text-caption text-grey-7">Periode pembayaran iuran</div>
-          <div class="text-weight-bold">Minggu ke-{{ minggu }} · {{ namaBulan }} {{ tahun }}</div>
-        </div>
-      </div>
+      <q-banner v-else rounded class="bg-blue-1 text-primary q-mb-lg">
+        Pilih warga terlebih dahulu untuk mengisi pembayaran iuran.
+      </q-banner>
 
       <q-form @submit="submitForm">
         <q-input
-          v-model.number="form.nominal"
-          type="number"
+          v-model="form.nominal"
+          inputmode="numeric"
           outlined
           dense
           label="Nominal pembayaran"
           prefix="Rp"
-          min="0"
-          step="1"
           :disable="loading"
-          :rules="[(value) => Number(value) > 0 || 'Nominal pembayaran harus lebih dari Rp0']"
+          @update:model-value="formatNominal"
         >
           <template #prepend>
             <q-icon name="account_balance_wallet" color="primary" />
+          </template>
+
+          <template #append>
+            <q-btn
+              v-if="form.nominal"
+              flat
+              round
+              dense
+              icon="delete_outline"
+              color="grey-7"
+              :disable="loading"
+              @click.stop="hapusNominal"
+            >
+              <q-tooltip>Hapus nominal</q-tooltip>
+            </q-btn>
           </template>
         </q-input>
 
@@ -61,7 +100,6 @@
           dense
           label="Tanggal pembayaran"
           :disable="loading"
-          :rules="[(value) => !!value || 'Tanggal pembayaran wajib diisi']"
         >
           <template #prepend>
             <q-icon name="event" color="primary" />
@@ -75,7 +113,6 @@
           outlined
           dense
           autogrow
-          maxlength="500"
           label="Keterangan"
           placeholder="Contoh: Dibayar tunai"
           :disable="loading"
@@ -104,7 +141,7 @@
               unelevated
               color="primary"
               icon="check_circle"
-              label="Simpan Pembayaran"
+              :label="mode === 'update' ? 'Update Iuran' : 'Simpan Pembayaran'"
               class="full-width"
               no-caps
               type="submit"
@@ -131,11 +168,6 @@ const props = defineProps({
     required: true,
   },
 
-  minggu: {
-    type: Number,
-    required: true,
-  },
-
   tahun: {
     type: Number,
     required: true,
@@ -145,9 +177,24 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+
+  mode: {
+    type: String,
+    default: 'bayar',
+  },
+
+  wargaOptions: {
+    type: Array,
+    default: () => [],
+  },
+
+  loadingWarga: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['save', 'cancel'])
+const emit = defineEmits(['save', 'cancel', 'select-warga', 'search-warga'])
 
 const bulanOptions = [
   'Januari',
@@ -165,12 +212,20 @@ const bulanOptions = [
 ]
 
 const form = reactive({
-  nominal: 0,
+  nominal: '',
   tanggal_bayar: '',
   keterangan: '',
 })
 
 const namaBulan = computed(() => bulanOptions[props.bulan - 1] || '')
+
+const formTitle = computed(() => {
+  if (props.mode === 'tambah') {
+    return 'Tambah Iuran'
+  }
+
+  return props.mode === 'update' ? 'Update Iuran' : 'Konfirmasi Pembayaran'
+})
 
 const tanggalHariIni = () => {
   const sekarang = new Date()
@@ -180,9 +235,43 @@ const tanggalHariIni = () => {
 }
 
 const resetForm = (warga) => {
-  form.nominal = Number(warga?.nominaliuran ?? warga?.nominal ?? 0)
-  form.tanggal_bayar = tanggalHariIni()
-  form.keterangan = ''
+  form.nominal = formatNominalApi(warga?.nominaliuran ?? warga?.nominal ?? 0)
+  form.tanggal_bayar = warga?.tanggal_bayar || tanggalHariIni()
+  form.keterangan = warga?.keterangan || ''
+}
+
+const formatNominalApi = (value) => {
+  const nominal = Number(value ?? 0)
+
+  return Number.isFinite(nominal) && nominal > 0
+    ? new Intl.NumberFormat('id-ID').format(nominal)
+    : ''
+}
+
+const formatRupiah = (value) => {
+  const angka = String(value ?? '').replace(/\D/g, '')
+
+  return angka ? new Intl.NumberFormat('id-ID').format(Number(angka)) : ''
+}
+
+const formatNominal = (value) => {
+  form.nominal = formatRupiah(value)
+}
+
+const hapusNominal = () => {
+  form.nominal = ''
+}
+
+const pilihWarga = (id) => {
+  const warga = props.wargaOptions.find((item) => Number(item.id) === Number(id))
+
+  emit('select-warga', warga || null)
+}
+
+const filterWarga = (keyword, update) => {
+  update(() => {
+    emit('search-warga', keyword)
+  })
 }
 
 watch(
@@ -193,7 +282,8 @@ watch(
 
 const submitForm = () => {
   emit('save', {
-    nominal: Number(form.nominal),
+    id: props.data?.iuran_id ?? null,
+    nominal: Number(String(form.nominal).replace(/\./g, '')),
     tanggal_bayar: form.tanggal_bayar,
     keterangan: form.keterangan || null,
   })
@@ -216,12 +306,4 @@ const submitForm = () => {
   background: #f5f9ff;
 }
 
-.periode-info {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  border: 1px solid #dcefe2;
-  border-radius: 12px;
-  background: #f4fbf6;
-}
 </style>
