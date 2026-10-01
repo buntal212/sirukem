@@ -17,6 +17,15 @@ const laporanRoutes = [
       requiresAuth: true,
     },
   },
+  {
+    path: 'laporan-kas-umum',
+    name: 'laporan-kas-umum',
+    component: () => import('../../pages/LaporanKasUmum/IndexPage.vue'),
+    meta: {
+      title: 'Laporan Kas Umum',
+      requiresAuth: true,
+    },
+  },
 ]
 
 export default laporanRoutes

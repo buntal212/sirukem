@@ -115,7 +115,15 @@
       ><q-card class="form-card"
         ><q-card-section><div class="text-h6">Tambah Pengeluaran</div></q-card-section
         ><q-card-section class="q-pt-none form-content"
-          ><q-input
+          ><q-select
+            v-model="form.jenis_transaksi"
+            dense
+            outlined
+            emit-value
+            map-options
+            :options="jenisTransaksiOptions"
+            label="Jenis transaksi" />
+          <q-input
             v-model.trim="form.kegiatan"
             dense
             outlined
@@ -214,7 +222,12 @@ const loading = ref(false)
 const saving = ref(false)
 const dialog = ref(false)
 const rincianBaru = () => ({ harga_satuan: '', jumlah: 1, keterangan: '' })
-const form = reactive({ kegiatan: '', rincian: [rincianBaru()] })
+const jenisTransaksiOptions = [
+  { label: 'RUKEM', value: 'RUKEM' },
+  { label: 'Kotak Masjid', value: 'KOTAK_MASJID' },
+  { label: 'Sumbangan Warga', value: 'SUMBANGAN_WARGA' },
+]
+const form = reactive({ jenis_transaksi: 'RUKEM', kegiatan: '', rincian: [rincianBaru()] })
 
 const rupiah = (nilai) =>
   new Intl.NumberFormat('id-ID', {
@@ -234,6 +247,7 @@ const formatNominal = (index, nilai) => {
 const tambahRincian = () => form.rincian.push(rincianBaru())
 const hapusRincian = (index) => form.rincian.splice(index, 1)
 const resetForm = () => {
+  form.jenis_transaksi = 'RUKEM'
   form.kegiatan = ''
   form.rincian.splice(0, form.rincian.length, rincianBaru())
 }
@@ -276,6 +290,7 @@ const simpan = async () => {
   saving.value = true
   try {
     const response = await api.post('/v1/pengeluaran/simpan', {
+      jenis_transaksi: form.jenis_transaksi,
       kegiatan: form.kegiatan,
       rincian: form.rincian.map((rinci) => ({
         harga_satuan: Number(rinci.harga_satuan.replace(/\./g, '')),

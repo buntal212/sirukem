@@ -314,6 +314,15 @@ const menus = [
   },
 
   {
+    title: 'Laporan Kas Umum',
+    description: 'Arus Kas RUKEM',
+    icon: 'account_balance',
+    route: '/laporan-kas-umum',
+    color: '#1976d2',
+    background: '#e3f2fd',
+  },
+
+  {
     title: 'Pengaturan',
     description: 'Manajemen Sistem',
     icon: 'settings',
