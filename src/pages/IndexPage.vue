@@ -296,6 +296,24 @@ const menus = [
   },
 
   {
+    title: 'Pengeluaran',
+    description: 'Catat Pengeluaran Kas',
+    icon: 'receipt_long',
+    route: '/pengeluaran',
+    color: '#1976d2',
+    background: '#e3f2fd',
+  },
+
+  {
+    title: 'Laporan Pengeluaran',
+    description: 'Rekapitulasi Pengeluaran Kas',
+    icon: 'summarize',
+    route: '/laporan-pengeluaran',
+    color: '#1976d2',
+    background: '#e3f2fd',
+  },
+
+  {
     title: 'Pengaturan',
     description: 'Manajemen Sistem',
     icon: 'settings',

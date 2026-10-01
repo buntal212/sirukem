@@ -8,6 +8,15 @@ const laporanRoutes = [
       requiresAuth: true,
     },
   },
+  {
+    path: 'laporan-pengeluaran',
+    name: 'laporan-pengeluaran',
+    component: () => import('../../pages/LaporanPengeluaran/IndexPage.vue'),
+    meta: {
+      title: 'Laporan Pengeluaran',
+      requiresAuth: true,
+    },
+  },
 ]
 
 export default laporanRoutes

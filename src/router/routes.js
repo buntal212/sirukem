@@ -2,6 +2,7 @@ import iuranrukemRoutes from './modules/iuranrukem'
 import pendudukRoutes from './modules/penduduk'
 import pengaturanRoutes from './modules/pengaturan'
 import laporanRoutes from './modules/laporan'
+import pengeluaranRoutes from './modules/pengeluaran'
 
 const routes = [
   {
@@ -26,10 +27,11 @@ const routes = [
     children: [
       { path: '', component: () => import('@/pages/IndexPage.vue') },
       { path: 'second', component: () => import('@/pages/SecondPage.vue') },
-       ...pendudukRoutes,
-       ...pengaturanRoutes,
-       ...iuranrukemRoutes,
-       ...laporanRoutes,
+      ...pendudukRoutes,
+      ...pengaturanRoutes,
+      ...iuranrukemRoutes,
+      ...laporanRoutes,
+      ...pengeluaranRoutes,
     ],
   },
 
