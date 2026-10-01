@@ -78,7 +78,14 @@
             <div class="balance-info">
               <div class="balance-label">Saldo RUKEM</div>
 
-              <div class="balance-value">Rp {{ formatRupiah(saldoRukem) }}</div>
+              <q-skeleton
+                v-if="saldoLoading"
+                type="text"
+                width="110px"
+                height="28px"
+                class="balance-skeleton"
+              />
+              <div v-else class="balance-value">Rp {{ formatRupiah(saldoRukem) }}</div>
 
               <div class="balance-description">Kas Rukun Kematian</div>
             </div>
@@ -95,7 +102,14 @@
             <div class="balance-info">
               <div class="balance-label">Kotak Masjid</div>
 
-              <div class="balance-value">Rp {{ formatRupiah(saldoMasjid) }}</div>
+              <q-skeleton
+                v-if="saldoLoading"
+                type="text"
+                width="110px"
+                height="28px"
+                class="balance-skeleton"
+              />
+              <div v-else class="balance-value">Rp {{ formatRupiah(saldoMasjid) }}</div>
 
               <div class="balance-description">Saldo Kotak Masjid</div>
             </div>
@@ -112,7 +126,14 @@
             <div class="balance-info">
               <div class="balance-label">Saldo Bantuan</div>
 
-              <div class="balance-value">Rp {{ formatRupiah(saldoBantuan) }}</div>
+              <q-skeleton
+                v-if="saldoLoading"
+                type="text"
+                width="110px"
+                height="28px"
+                class="balance-skeleton"
+              />
+              <div v-else class="balance-value">Rp {{ formatRupiah(saldoBantuan) }}</div>
 
               <div class="balance-description">Dana Bantuan Sosial</div>
             </div>
@@ -246,6 +267,7 @@ const currentYear = computed(() => {
 const saldoRukem = ref(0)
 const saldoMasjid = ref(8750000)
 const saldoBantuan = ref(4250000)
+const saldoLoading = ref(true)
 
 const formatRupiah = (value) => {
   return new Intl.NumberFormat('id-ID').format(value || 0)
@@ -258,6 +280,8 @@ const getSaldoRukem = async () => {
     saldoRukem.value = Number(response.data?.data?.saldo_rukem ?? 0)
   } catch (error) {
     console.error('GAGAL MENGAMBIL SALDO RUKEM:', error)
+  } finally {
+    saldoLoading.value = false
   }
 }
 
@@ -329,24 +353,6 @@ const menus = [
     route: '/pengaturan',
     color: '#e53955',
     background: '#ffebee',
-  },
-
-  {
-    title: 'Galeri',
-    description: 'Dokumentasi Kegiatan',
-    icon: 'photo_library',
-    route: '/galeri',
-    color: '#0097a7',
-    background: '#e0f7fa',
-  },
-
-  {
-    title: 'Informasi',
-    description: 'Berita & Pengumuman',
-    icon: 'info',
-    route: '/informasi',
-    color: '#546e8a',
-    background: '#eceff1',
   },
 ]
 
@@ -1109,6 +1115,11 @@ const logout = async () => {
   font-size: 21px;
   line-height: 1.2;
   font-weight: 800;
+}
+
+.balance-skeleton {
+  margin-top: 3px;
+  opacity: 0.42;
 }
 
 .balance-description {
