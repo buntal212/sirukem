@@ -1,11 +1,9 @@
 <template>
   <q-page class="dashboard-page">
-
     <!-- =====================================================
          HERO
     ====================================================== -->
     <section class="hero-section">
-
       <!-- DECORATION -->
       <div class="hero-circle circle-1"></div>
       <div class="hero-circle circle-2"></div>
@@ -24,35 +22,23 @@
 
       <!-- HERO CONTENT -->
       <div class="hero-content">
-
         <!-- LOGO / ICON DESA -->
         <div class="logo-wrapper">
-          <q-icon
-            name="account_balance"
-            size="54px"
-            color="white"
-          />
+          <q-icon name="account_balance" size="54px" color="white" />
         </div>
 
         <div class="hero-text">
-          <div class="hero-small">
-            SISTEM INFORMASI
-          </div>
+          <div class="hero-small">SISTEM INFORMASI</div>
 
-          <div class="hero-title">
-            DESA ROWO
-          </div>
+          <div class="hero-title">DESA ROWO</div>
 
-          <div class="hero-subtitle">
-            KECAMATAN LECES
-          </div>
+          <div class="hero-subtitle">KECAMATAN LECES</div>
 
           <div class="hero-description">
-            Melayani dengan Data,<br>
+            Melayani dengan Data,<br />
             Membangun untuk Masyarakat
           </div>
         </div>
-
       </div>
 
       <!-- VILLAGE DECORATION -->
@@ -65,31 +51,23 @@
       <!-- WAVE -->
       <div class="wave wave-one"></div>
       <div class="wave wave-two"></div>
-
     </section>
-
 
     <!-- =====================================================
          CONTENT
     ====================================================== -->
     <section class="content-section">
-
       <!-- WELCOME -->
       <div class="welcome-section">
-        <div class="welcome-title">
-          Selamat Datang
-        </div>
+        <div class="welcome-title">Selamat Datang</div>
 
-        <div class="welcome-subtitle">
-          Silakan pilih layanan yang ingin digunakan
-        </div>
+        <div class="welcome-subtitle">Silakan pilih layanan yang ingin digunakan</div>
       </div>
 
       <!-- ===================================================
           RINGKASAN SALDO
       ==================================================== -->
       <div class="balance-section">
-
         <!-- SALDO RUKEM -->
         <q-card flat class="balance-card balance-rukem">
           <q-card-section class="balance-content">
@@ -98,21 +76,14 @@
             </div>
 
             <div class="balance-info">
-              <div class="balance-label">
-                Saldo RUKEM
-              </div>
+              <div class="balance-label">Saldo RUKEM</div>
 
-              <div class="balance-value">
-                Rp {{ formatRupiah(saldoRukem) }}
-              </div>
+              <div class="balance-value">Rp {{ formatRupiah(saldoRukem) }}</div>
 
-              <div class="balance-description">
-                Kas Rukun Kematian
-              </div>
+              <div class="balance-description">Kas Rukun Kematian</div>
             </div>
           </q-card-section>
         </q-card>
-
 
         <!-- SALDO KOTAK MASJID -->
         <q-card flat class="balance-card balance-masjid">
@@ -122,21 +93,14 @@
             </div>
 
             <div class="balance-info">
-              <div class="balance-label">
-                Kotak Masjid
-              </div>
+              <div class="balance-label">Kotak Masjid</div>
 
-              <div class="balance-value">
-                Rp {{ formatRupiah(saldoMasjid) }}
-              </div>
+              <div class="balance-value">Rp {{ formatRupiah(saldoMasjid) }}</div>
 
-              <div class="balance-description">
-                Saldo Kotak Masjid
-              </div>
+              <div class="balance-description">Saldo Kotak Masjid</div>
             </div>
           </q-card-section>
         </q-card>
-
 
         <!-- SALDO BANTUAN -->
         <q-card flat class="balance-card balance-bantuan">
@@ -146,29 +110,20 @@
             </div>
 
             <div class="balance-info">
-              <div class="balance-label">
-                Saldo Bantuan
-              </div>
+              <div class="balance-label">Saldo Bantuan</div>
 
-              <div class="balance-value">
-                Rp {{ formatRupiah(saldoBantuan) }}
-              </div>
+              <div class="balance-value">Rp {{ formatRupiah(saldoBantuan) }}</div>
 
-              <div class="balance-description">
-                Dana Bantuan Sosial
-              </div>
+              <div class="balance-description">Dana Bantuan Sosial</div>
             </div>
           </q-card-section>
         </q-card>
-
       </div>
-
 
       <!-- ===================================================
            MENU GRID
       ==================================================== -->
       <div class="menu-grid">
-
         <q-card
           v-for="menu in menus"
           :key="menu.title"
@@ -178,22 +133,17 @@
           @click="openMenu(menu)"
         >
           <q-card-section class="menu-card-content">
-
             <div
               class="menu-icon"
               :style="{
                 background: menu.background,
-                color: menu.color
+                color: menu.color,
               }"
             >
-              <q-icon
-                :name="menu.icon"
-                size="30px"
-              />
+              <q-icon :name="menu.icon" size="30px" />
             </div>
 
             <div class="menu-information">
-
               <div class="menu-title">
                 {{ menu.title }}
               </div>
@@ -201,27 +151,17 @@
               <div class="menu-description">
                 {{ menu.description }}
               </div>
-
             </div>
 
-            <q-icon
-              name="chevron_right"
-              color="primary"
-              size="24px"
-              class="menu-arrow"
-            />
-
+            <q-icon name="chevron_right" color="primary" size="24px" class="menu-arrow" />
           </q-card-section>
         </q-card>
-
       </div>
-
 
       <!-- ===================================================
            FOOTER DECORATION
       ==================================================== -->
       <div class="footer-decoration">
-
         <div class="footer-icons">
           <q-icon name="park" />
           <q-icon name="home" />
@@ -229,71 +169,40 @@
           <q-icon name="home" />
           <q-icon name="park" />
         </div>
-
       </div>
-
     </section>
-
 
     <!-- =====================================================
          FOOTER
     ====================================================== -->
     <footer class="footer-section">
+      <div class="footer-title">Paguyuban Desa Rowo</div>
 
-      <div class="footer-title">
-        Paguyuban Desa Rowo
-      </div>
+      <div class="footer-subtitle">KECAMATAN LECES</div>
 
-      <div class="footer-subtitle">
-        KECAMATAN LECES
-      </div>
-
-      <div class="footer-copyright">
-        © {{ currentYear }} Desa Rowo
-      </div>
+      <div class="footer-copyright">© {{ currentYear }} Desa Rowo</div>
       <div class="footer-company">CV. UDUMBARA INFORMATIKA</div>
-
     </footer>
-
 
     <!-- =====================================================
          LOGOUT DIALOG
     ====================================================== -->
     <q-dialog v-model="logoutDialog">
       <q-card class="logout-dialog">
-
         <q-card-section class="text-center q-pt-lg">
-
           <div class="dialog-icon">
-            <q-icon
-              name="logout"
-              size="34px"
-            />
+            <q-icon name="logout" size="34px" />
           </div>
 
-          <div class="text-h6 text-weight-bold q-mt-md">
-            Keluar Aplikasi?
-          </div>
+          <div class="text-h6 text-weight-bold q-mt-md">Keluar Aplikasi?</div>
 
           <div class="text-grey-7 q-mt-sm">
-            Apakah Anda yakin ingin keluar dari Sistem Informasi Desa Rowo?
+            Apakah Anda yakin ingin keluar dari Sistem Informasi Desa Rowo ?
           </div>
-
         </q-card-section>
 
-        <q-card-actions
-          align="center"
-          class="q-pa-lg q-pt-sm"
-        >
-
-          <q-btn
-            flat
-            no-caps
-            label="Batal"
-            color="grey-7"
-            class="dialog-button"
-            v-close-popup
-          />
+        <q-card-actions align="center" class="q-pa-lg q-pt-sm">
+          <q-btn flat no-caps label="Batal" color="grey-7" class="dialog-button" v-close-popup />
 
           <q-btn
             unelevated
@@ -305,15 +214,11 @@
             :loading="logoutLoading"
             @click="logout"
           />
-
         </q-card-actions>
-
       </q-card>
     </q-dialog>
-
   </q-page>
 </template>
-
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
@@ -358,7 +263,6 @@ const getSaldoRukem = async () => {
 
 onMounted(getSaldoRukem)
 
-
 // =========================================================
 // MENU
 // =========================================================
@@ -391,8 +295,6 @@ const menus = [
     background: '#fff3e0',
   },
 
-
-
   {
     title: 'Pengaturan',
     description: 'Manajemen Sistem',
@@ -421,7 +323,6 @@ const menus = [
   },
 ]
 
-
 // =========================================================
 // OPEN MENU
 // =========================================================
@@ -434,7 +335,6 @@ const openMenu = (menu) => {
   router.push(menu.route)
 }
 
-
 // =========================================================
 // CONFIRM LOGOUT
 // =========================================================
@@ -442,7 +342,6 @@ const openMenu = (menu) => {
 const confirmLogout = () => {
   logoutDialog.value = true
 }
-
 
 // =========================================================
 // LOGOUT
@@ -452,19 +351,11 @@ const logout = async () => {
   logoutLoading.value = true
 
   try {
-
     // Coba hapus token di server
     await api.post('/v1/logout')
-
   } catch (error) {
-
-    console.warn(
-      'Logout API:',
-      error.response?.data?.message || error.message
-    )
-
+    console.warn('Logout API:', error.response?.data?.message || error.message)
   } finally {
-
     // Token lokal tetap dibersihkan
     LocalStorage.remove('auth_token')
     LocalStorage.remove('auth_user')
@@ -483,7 +374,6 @@ const logout = async () => {
 }
 </script>
 
-
 <style scoped>
 /* =========================================================
    PAGE
@@ -495,7 +385,6 @@ const logout = async () => {
   color: #102a43;
 }
 
-
 /* =========================================================
    HERO
 ========================================================= */
@@ -506,16 +395,8 @@ const logout = async () => {
   padding: 32px 28px 80px;
   overflow: hidden;
 
-  background:
-    linear-gradient(
-      135deg,
-      #0d47a1 0%,
-      #1565c0 35%,
-      #1e88e5 70%,
-      #64b5f6 100%
-    );
+  background: linear-gradient(135deg, #0d47a1 0%, #1565c0 35%, #1e88e5 70%, #64b5f6 100%);
 }
-
 
 /* =========================================================
    HERO DECORATION
@@ -541,7 +422,6 @@ const logout = async () => {
   bottom: 20px;
 }
 
-
 /* =========================================================
    LOGOUT
 ========================================================= */
@@ -565,7 +445,6 @@ const logout = async () => {
 
   backdrop-filter: blur(5px);
 }
-
 
 /* =========================================================
    HERO CONTENT
@@ -650,7 +529,6 @@ const logout = async () => {
   font-style: italic;
 }
 
-
 /* =========================================================
    VILLAGE DECORATION
 ========================================================= */
@@ -680,7 +558,6 @@ const logout = async () => {
 .village-decoration .q-icon:nth-child(3) {
   font-size: 85px;
 }
-
 
 /* =========================================================
    WAVE
@@ -716,7 +593,6 @@ const logout = async () => {
   transform: rotate(-2deg);
 }
 
-
 /* =========================================================
    CONTENT
 ========================================================= */
@@ -730,7 +606,6 @@ const logout = async () => {
 
   padding: 25px 24px 10px;
 }
-
 
 /* =========================================================
    WELCOME
@@ -755,7 +630,6 @@ const logout = async () => {
   color: #78909c;
 }
 
-
 /* =========================================================
    MENU GRID
 ========================================================= */
@@ -763,12 +637,10 @@ const logout = async () => {
 .menu-grid {
   display: grid;
 
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
   gap: 16px;
 }
-
 
 /* =========================================================
    MENU CARD
@@ -786,8 +658,7 @@ const logout = async () => {
     box-shadow 0.2s ease,
     border-color 0.2s ease;
 
-  box-shadow:
-    0 5px 18px rgba(23, 76, 130, 0.06);
+  box-shadow: 0 5px 18px rgba(23, 76, 130, 0.06);
 }
 
 .menu-card:hover {
@@ -795,8 +666,7 @@ const logout = async () => {
 
   border-color: #bbdefb;
 
-  box-shadow:
-    0 10px 25px rgba(21, 101, 192, 0.13);
+  box-shadow: 0 10px 25px rgba(21, 101, 192, 0.13);
 }
 
 .menu-card:active {
@@ -811,7 +681,6 @@ const logout = async () => {
   display: flex;
   align-items: center;
 }
-
 
 /* =========================================================
    MENU ICON
@@ -831,7 +700,6 @@ const logout = async () => {
 
   margin-right: 15px;
 }
-
 
 /* =========================================================
    MENU TEXT
@@ -862,7 +730,6 @@ const logout = async () => {
 .menu-arrow {
   margin-left: 5px;
 }
-
 
 /* =========================================================
    FOOTER DECORATION
@@ -901,7 +768,6 @@ const logout = async () => {
   font-size: 95px;
 }
 
-
 /* =========================================================
    FOOTER
 ========================================================= */
@@ -913,13 +779,7 @@ const logout = async () => {
 
   color: white;
 
-  background:
-    linear-gradient(
-      135deg,
-      #0d47a1,
-      #1565c0,
-      #1976d2
-    );
+  background: linear-gradient(135deg, #0d47a1, #1565c0, #1976d2);
 }
 
 .footer-title {
@@ -944,7 +804,6 @@ const logout = async () => {
 
   opacity: 0.65;
 }
-
 
 /* =========================================================
    LOGOUT DIALOG
@@ -981,20 +840,15 @@ const logout = async () => {
   border-radius: 9px;
 }
 
-
 /* =========================================================
    MOBILE
 ========================================================= */
 
 @media (max-width: 600px) {
-
   .hero-section {
     min-height: 300px;
 
-    padding:
-      25px
-      20px
-      75px;
+    padding: 25px 20px 75px;
   }
 
   .logout-wrapper {
@@ -1058,10 +912,7 @@ const logout = async () => {
   }
 
   .content-section {
-    padding:
-      20px
-      14px
-      5px;
+    padding: 20px 14px 5px;
   }
 
   .welcome-title {
@@ -1098,10 +949,7 @@ const logout = async () => {
 
     min-width: 54px;
 
-    margin:
-      0
-      0
-      10px;
+    margin: 0 0 10px;
   }
 
   .menu-icon .q-icon {
@@ -1121,13 +969,11 @@ const logout = async () => {
   }
 }
 
-
 /* =========================================================
    VERY SMALL MOBILE
 ========================================================= */
 
 @media (max-width: 360px) {
-
   .hero-title {
     font-size: 23px;
   }
@@ -1189,27 +1035,15 @@ const logout = async () => {
 }
 
 .balance-rukem {
-  background: linear-gradient(
-    135deg,
-    #00897b,
-    #26a69a
-  );
+  background: linear-gradient(135deg, #00897b, #26a69a);
 }
 
 .balance-masjid {
-  background: linear-gradient(
-    135deg,
-    #1565c0,
-    #42a5f5
-  );
+  background: linear-gradient(135deg, #1565c0, #42a5f5);
 }
 
 .balance-bantuan {
-  background: linear-gradient(
-    135deg,
-    #ef6c00,
-    #ffa726
-  );
+  background: linear-gradient(135deg, #ef6c00, #ffa726);
 }
 
 .balance-content {
@@ -1256,13 +1090,11 @@ const logout = async () => {
   opacity: 0.75;
 }
 
-
 /* =========================================================
    BALANCE MOBILE
 ========================================================= */
 
 @media (max-width: 600px) {
-
   .balance-section {
     gap: 8px;
     margin-bottom: 20px;
@@ -1303,13 +1135,11 @@ const logout = async () => {
   }
 }
 
-
 /* =========================================================
    VERY SMALL MOBILE
 ========================================================= */
 
 @media (max-width: 360px) {
-
   .balance-section {
     gap: 6px;
   }
