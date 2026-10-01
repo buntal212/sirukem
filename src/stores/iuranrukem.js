@@ -57,9 +57,9 @@ export const useIuranStore = defineStore('iuran', {
 
             search: this.search,
 
-            bulan: params.bulan,
+            tanggal_dari: params.tanggal_dari,
 
-            tahun: params.tahun,
+            tanggal_sampai: params.tanggal_sampai,
           },
         })
 

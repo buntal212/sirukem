@@ -316,7 +316,7 @@
 
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { LocalStorage, useQuasar } from 'quasar'
 import { api } from '../boot/axios'
@@ -338,13 +338,25 @@ const currentYear = computed(() => {
 // SALDO
 // =========================================================
 
-const saldoRukem = ref(12500000)
+const saldoRukem = ref(0)
 const saldoMasjid = ref(8750000)
 const saldoBantuan = ref(4250000)
 
 const formatRupiah = (value) => {
   return new Intl.NumberFormat('id-ID').format(value || 0)
 }
+
+const getSaldoRukem = async () => {
+  try {
+    const response = await api.get('/v1/dashboard/saldo-rukem')
+
+    saldoRukem.value = Number(response.data?.data?.saldo_rukem ?? 0)
+  } catch (error) {
+    console.error('GAGAL MENGAMBIL SALDO RUKEM:', error)
+  }
+}
+
+onMounted(getSaldoRukem)
 
 
 // =========================================================

@@ -17,6 +17,22 @@
             <q-icon name="event" color="primary" />
           </template>
         </q-select>
+
+        <q-select
+          :model-value="status"
+          :options="statusOptions"
+          outlined
+          dense
+          emit-value
+          map-options
+          label="Status Pembayaran"
+          class="q-mt-sm"
+          @update:model-value="ubahStatus"
+        >
+          <template #prepend>
+            <q-icon name="filter_list" color="primary" />
+          </template>
+        </q-select>
       </q-card-section>
     </q-card>
 
@@ -83,12 +99,13 @@
 
             <div class="text-right">
               <div class="text-caption text-grey-7">Target setahun</div>
-              <div class="text-caption text-weight-bold">{{ rupiah(ringkasan.target_iuran) }}</div>
+              <div class="text-caption text-weight-bold">{{ rupiah(item.target_iuran) }}</div>
             </div>
           </div>
 
           <q-linear-progress
             rounded
+            stripe
             size="10px"
             :value="progres(item)"
             :color="progres(item) >= 1 ? 'positive' : 'primary'"
@@ -139,6 +156,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  status: {
+    type: String,
+    default: 'semua',
+  },
   loadingMore: {
     type: Boolean,
     default: false,
@@ -153,12 +174,23 @@ const emit = defineEmits(['filter', 'lihat-detail', 'load-more'])
 
 const tahunOptions = Array.from({ length: 7 }, (_, index) => new Date().getFullYear() - 3 + index)
 
+const statusOptions = [
+  { label: 'Semua Status', value: 'semua' },
+  { label: 'Belum Bayar', value: 'belum_bayar' },
+  { label: 'Lunas', value: 'lunas' },
+  { label: 'Belum Lunas', value: 'belum_lunas' },
+]
+
 const ubahTahun = (tahun) => {
   emit('filter', { tahun })
 }
 
+const ubahStatus = (status) => {
+  emit('filter', { status })
+}
+
 const progres = (item) => {
-  const target = Number(props.ringkasan.target_iuran || 0)
+  const target = Number(item.target_iuran || 0)
 
   if (target <= 0) {
     return 0

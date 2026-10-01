@@ -23,6 +23,7 @@
         :data="store.items"
         :ringkasan="store.ringkasan"
         :tahun="store.params.tahun"
+        :status="store.params.status"
         :loading-more="store.loadingMore"
         :has-more="store.hasMore"
         @filter="ubahFilter"

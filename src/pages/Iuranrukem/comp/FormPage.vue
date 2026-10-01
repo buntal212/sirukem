@@ -93,20 +93,6 @@
         </q-input>
 
         <q-input
-          v-model="form.tanggal_bayar"
-          class="q-mt-md"
-          type="date"
-          outlined
-          dense
-          label="Tanggal pembayaran"
-          :disable="loading"
-        >
-          <template #prepend>
-            <q-icon name="event" color="primary" />
-          </template>
-        </q-input>
-
-        <q-input
           v-model.trim="form.keterangan"
           class="q-mt-md"
           type="textarea"
@@ -213,7 +199,6 @@ const bulanOptions = [
 
 const form = reactive({
   nominal: '',
-  tanggal_bayar: '',
   keterangan: '',
 })
 
@@ -227,16 +212,8 @@ const formTitle = computed(() => {
   return props.mode === 'update' ? 'Update Iuran' : 'Konfirmasi Pembayaran'
 })
 
-const tanggalHariIni = () => {
-  const sekarang = new Date()
-  const offset = sekarang.getTimezoneOffset() * 60_000
-
-  return new Date(sekarang.getTime() - offset).toISOString().slice(0, 10)
-}
-
 const resetForm = (warga) => {
   form.nominal = formatNominalApi(warga?.nominaliuran ?? warga?.nominal ?? 0)
-  form.tanggal_bayar = warga?.tanggal_bayar || tanggalHariIni()
   form.keterangan = warga?.keterangan || ''
 }
 
@@ -284,7 +261,6 @@ const submitForm = () => {
   emit('save', {
     id: props.data?.iuran_id ?? null,
     nominal: Number(String(form.nominal).replace(/\./g, '')),
-    tanggal_bayar: form.tanggal_bayar,
     keterangan: form.keterangan || null,
   })
 }

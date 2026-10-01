@@ -52,12 +52,12 @@
         :data="store.items"
         :loading-more="store.loadingMore"
         :has-more="store.hasMore"
-        :bulan="bulan"
-        :tahun="tahun"
+        :tanggal-dari="tanggalDari"
+        :tanggal-sampai="tanggalSampai"
         @add="openTambah"
         @search="searchIuran"
-        @bulan="changeBulan"
-        @tahun="changeTahun"
+        @tanggal-dari="changeTanggalDari"
+        @tanggal-sampai="changeTanggalSampai"
         @update="openUpdate"
         @load-more="loadMoreIuran"
         @refresh="refreshIuran"
@@ -110,6 +110,17 @@ const sekarang = new Date()
 const bulan = ref(sekarang.getMonth() + 1)
 const tahun = ref(sekarang.getFullYear())
 
+const formatTanggalInput = (tanggal) => {
+  const tahun = tanggal.getFullYear()
+  const bulan = String(tanggal.getMonth() + 1).padStart(2, '0')
+  const hari = String(tanggal.getDate()).padStart(2, '0')
+
+  return `${tahun}-${bulan}-${hari}`
+}
+
+const tanggalDari = ref(`${tahun.value}-${String(bulan.value).padStart(2, '0')}-01`)
+const tanggalSampai = ref(formatTanggalInput(sekarang))
+
 // =========================================================
 // PAGE TITLE
 // =========================================================
@@ -141,8 +152,8 @@ onMounted(async () => {
 const getIuran = async () => {
   try {
     await store.getIuran({
-      bulan: bulan.value,
-      tahun: tahun.value,
+      tanggal_dari: tanggalDari.value,
+      tanggal_sampai: tanggalSampai.value,
       reset: true,
     })
   } catch (error) {
@@ -233,29 +244,29 @@ const backToList = () => {
 }
 
 // =========================================================
-// GANTI BULAN
+// GANTI TANGGAL DARI
 // =========================================================
 
-const changeBulan = async (value) => {
-  if (!value || value === bulan.value) {
+const changeTanggalDari = async (value) => {
+  if (!value || value === tanggalDari.value) {
     return
   }
 
-  bulan.value = value
+  tanggalDari.value = value
 
   await getIuran()
 }
 
 // =========================================================
-// GANTI TAHUN
+// GANTI TANGGAL SAMPAI
 // =========================================================
 
-const changeTahun = async (value) => {
-  if (!value || value === tahun.value) {
+const changeTanggalSampai = async (value) => {
+  if (!value || value === tanggalSampai.value) {
     return
   }
 
-  tahun.value = value
+  tanggalSampai.value = value
 
   await getIuran()
 }
@@ -267,8 +278,8 @@ const changeTahun = async (value) => {
 const searchIuran = async (keyword) => {
   try {
     await store.searchIuran(keyword, {
-      bulan: bulan.value,
-      tahun: tahun.value,
+      tanggal_dari: tanggalDari.value,
+      tanggal_sampai: tanggalSampai.value,
     })
   } catch (error) {
     console.error('SEARCH IURAN ERROR:', error)
@@ -315,8 +326,8 @@ const savePembayaran = async (data) => {
     })
 
     await store.refreshIuran({
-      bulan: bulan.value,
-      tahun: tahun.value,
+      tanggal_dari: tanggalDari.value,
+      tanggal_sampai: tanggalSampai.value,
     })
 
     backToList()
@@ -346,8 +357,8 @@ const loadMoreIuran = async (done) => {
     }
 
     await store.loadMore({
-      bulan: bulan.value,
-      tahun: tahun.value,
+      tanggal_dari: tanggalDari.value,
+      tanggal_sampai: tanggalSampai.value,
     })
 
     if (typeof done === 'function') {
@@ -369,8 +380,8 @@ const loadMoreIuran = async (done) => {
 const refreshIuran = async (done) => {
   try {
     await store.refreshIuran({
-      bulan: bulan.value,
-      tahun: tahun.value,
+      tanggal_dari: tanggalDari.value,
+      tanggal_sampai: tanggalSampai.value,
     })
   } catch (error) {
     console.error('REFRESH IURAN ERROR:', error)

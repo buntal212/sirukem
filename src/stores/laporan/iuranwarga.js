@@ -17,6 +17,7 @@ export const useLaporanIuranWargaStore = defineStore('laporan-iuran-warga', {
 
     params: {
       tahun: new Date().getFullYear(),
+      status: 'semua',
       search: '',
       per_page: 20,
     },

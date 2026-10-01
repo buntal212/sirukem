@@ -13,43 +13,43 @@
           <div class="q-ml-sm">
             <div class="text-weight-bold text-subtitle1">Periode Iuran</div>
 
-            <div class="text-caption text-grey-7">Pilih bulan dan tahun transaksi iuran warga</div>
+            <div class="text-caption text-grey-7">Pilih rentang tanggal transaksi iuran warga</div>
           </div>
         </div>
 
         <div class="row q-col-gutter-sm">
-          <!-- BULAN -->
+          <!-- TANGGAL DARI -->
           <div class="col-6">
-            <q-select
-              :model-value="bulan"
-              :options="bulanOptions"
+            <q-input
+              :model-value="tanggalDari"
               outlined
               dense
-              emit-value
-              map-options
-              label="Bulan"
-              @update:model-value="changeBulan"
+              type="date"
+              label="Tanggal Dari"
+              :max="tanggalSampai"
+              @update:model-value="changeTanggalDari"
             >
               <template #prepend>
                 <q-icon name="calendar_month" color="primary" />
               </template>
-            </q-select>
+            </q-input>
           </div>
 
-          <!-- TAHUN -->
+          <!-- TANGGAL SAMPAI -->
           <div class="col-6">
-            <q-select
-              :model-value="tahun"
-              :options="tahunOptions"
+            <q-input
+              :model-value="tanggalSampai"
               outlined
               dense
-              label="Tahun"
-              @update:model-value="changeTahun"
+              type="date"
+              label="Tanggal Sampai"
+              :min="tanggalDari"
+              @update:model-value="changeTanggalSampai"
             >
               <template #prepend>
                 <q-icon name="event" color="primary" />
               </template>
-            </q-select>
+            </q-input>
           </div>
         </div>
       </q-card-section>
@@ -79,9 +79,9 @@
     <!-- =====================================================
          JUDUL LIST
     ====================================================== -->
-    <div class="row items-center justify-between q-mb-sm q-px-xs">
+    <div class="list-heading row items-center justify-between q-mb-sm q-px-xs">
       <div>
-        <div class="text-weight-bold">Transaksi Iuran {{ namaBulan }} {{ tahun }}</div>
+        <div class="text-weight-bold">Transaksi Iuran {{ periodeIuran }}</div>
 
         <div class="text-caption text-grey-7">Daftar pembayaran iuran warga</div>
       </div>
@@ -135,7 +135,6 @@
                       {{ item.nik || '-' }}
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -147,9 +146,7 @@
             ========================== -->
             <div class="row items-center justify-between">
               <div>
-                <div class="text-caption text-grey-7">
-                  Pembayaran iuran
-                </div>
+                <div class="text-caption text-grey-7">Pembayaran iuran</div>
 
                 <div class="nominal">
                   {{ rupiah(getNominal(item)) }}
@@ -160,7 +157,7 @@
                 <div class="text-caption text-grey-6">Dibayar</div>
 
                 <div class="text-caption text-weight-bold text-positive">
-                  {{ formatTanggal(item.tanggal_bayar) }}
+                  {{ formatTanggalBayar(item.tanggal_bayar) }}
                 </div>
 
                 <q-btn
@@ -226,13 +223,13 @@ const props = defineProps({
     default: false,
   },
 
-  bulan: {
-    type: Number,
+  tanggalDari: {
+    type: String,
     required: true,
   },
 
-  tahun: {
-    type: Number,
+  tanggalSampai: {
+    type: String,
     required: true,
   },
 })
@@ -241,7 +238,15 @@ const props = defineProps({
 // EMITS
 // =========================================================
 
-const emit = defineEmits(['add', 'search', 'bulan', 'tahun', 'update', 'load-more', 'refresh'])
+const emit = defineEmits([
+  'add',
+  'search',
+  'tanggal-dari',
+  'tanggal-sampai',
+  'update',
+  'load-more',
+  'refresh',
+])
 
 // =========================================================
 // STATE
@@ -250,38 +255,23 @@ const emit = defineEmits(['add', 'search', 'bulan', 'tahun', 'update', 'load-mor
 const keyword = ref('')
 
 // =========================================================
-// BULAN
+// PERIODE
 // =========================================================
 
-const bulanOptions = [
-  { label: 'Januari', value: 1 },
-  { label: 'Februari', value: 2 },
-  { label: 'Maret', value: 3 },
-  { label: 'April', value: 4 },
-  { label: 'Mei', value: 5 },
-  { label: 'Juni', value: 6 },
-  { label: 'Juli', value: 7 },
-  { label: 'Agustus', value: 8 },
-  { label: 'September', value: 9 },
-  { label: 'Oktober', value: 10 },
-  { label: 'November', value: 11 },
-  { label: 'Desember', value: 12 },
-]
+const formatTanggal = (value) => {
+  if (!value) {
+    return ''
+  }
 
-// =========================================================
-// TAHUN
-// =========================================================
+  return new Intl.DateTimeFormat('id-ID', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(new Date(`${value}T00:00:00`))
+}
 
-const currentYear = new Date().getFullYear()
-
-const tahunOptions = Array.from({ length: 7 }, (_, index) => currentYear - 3 + index)
-
-// =========================================================
-// NAMA BULAN
-// =========================================================
-
-const namaBulan = computed(() => {
-  return bulanOptions.find((item) => item.value === props.bulan)?.label || ''
+const periodeIuran = computed(() => {
+  return `${formatTanggal(props.tanggalDari)} - ${formatTanggal(props.tanggalSampai)}`
 })
 
 // =========================================================
@@ -310,7 +300,7 @@ const rupiah = (value) => {
 // FORMAT TANGGAL
 // =========================================================
 
-const formatTanggal = (value) => {
+const formatTanggalBayar = (value) => {
   if (!value) {
     return '-'
   }
@@ -337,19 +327,19 @@ const search = (value) => {
 }
 
 // =========================================================
-// BULAN
+// TANGGAL DARI
 // =========================================================
 
-const changeBulan = (value) => {
-  emit('bulan', value)
+const changeTanggalDari = (value) => {
+  emit('tanggal-dari', value)
 }
 
 // =========================================================
-// TAHUN
+// TANGGAL SAMPAI
 // =========================================================
 
-const changeTahun = (value) => {
-  emit('tahun', value)
+const changeTanggalSampai = (value) => {
+  emit('tanggal-sampai', value)
 }
 
 // =========================================================
@@ -484,6 +474,7 @@ const loadMore = (index, done) => {
 @media (min-width: 768px) {
   .filter-card,
   .search-card,
+  .list-heading,
   .warga-card,
   .empty-card {
     max-width: 900px;
