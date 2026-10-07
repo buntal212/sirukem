@@ -72,6 +72,30 @@
               </div>
             </div>
             <div class="text-weight-bold text-primary">- {{ rupiah(item.total_nominal) }}</div>
+            <q-btn
+              flat
+              round
+              dense
+              color="primary"
+              icon="edit"
+              class="q-ml-xs"
+              @click="bukaEditHeader(item)"
+            >
+              <q-tooltip>Edit header</q-tooltip>
+            </q-btn>
+            <q-btn
+              v-if="adalahBulanBerjalan(item.tanggal_pengeluaran)"
+              flat
+              round
+              dense
+              color="negative"
+              icon="delete_outline"
+              :loading="menghapusHeaderId === item.id"
+              :disable="menghapusHeaderId !== null"
+              @click="hapusHeader(item)"
+            >
+              <q-tooltip>Hapus header</q-tooltip>
+            </q-btn>
           </q-card-section>
 
           <q-expansion-item
@@ -92,6 +116,20 @@
                   </q-item-section>
                   <q-item-section side class="text-weight-bold text-primary">
                     {{ rupiah(rinci.nominal) }}
+                  </q-item-section>
+                  <q-item-section v-if="adalahBulanBerjalan(item.tanggal_pengeluaran)" side>
+                    <q-btn
+                      flat
+                      round
+                      dense
+                      color="negative"
+                      icon="delete_outline"
+                      :loading="menghapusRincianId === rinci.id"
+                      :disable="menghapusRincianId !== null"
+                      @click="hapusRincianTersimpan(item, rinci)"
+                    >
+                      <q-tooltip>Hapus rincian</q-tooltip>
+                    </q-btn>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -199,6 +237,37 @@
             :loading="saving"
             @click="simpan" /></q-card-actions></q-card
     ></q-dialog>
+
+    <q-dialog v-model="dialogEditHeader" persistent>
+      <q-card class="form-card">
+        <q-card-section>
+          <div class="text-h6">Edit Header Pengeluaran</div>
+          <div class="text-caption text-grey-7">
+            Nominal dan jenis transaksi tidak dapat diubah.
+          </div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <q-input
+            v-model.trim="formEditHeader.kegiatan"
+            dense
+            outlined
+            label="Kegiatan"
+            autofocus
+          />
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat no-caps label="Batal" v-close-popup />
+          <q-btn
+            unelevated
+            no-caps
+            color="primary"
+            label="Simpan perubahan"
+            :loading="menyimpanEditHeader"
+            @click="simpanEditHeader"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -220,7 +289,11 @@ const tanggalSampai = ref(formatInput(sekarang))
 const items = ref([])
 const loading = ref(false)
 const saving = ref(false)
+const menghapusRincianId = ref(null)
+const menghapusHeaderId = ref(null)
 const dialog = ref(false)
+const dialogEditHeader = ref(false)
+const menyimpanEditHeader = ref(false)
 const rincianBaru = () => ({ harga_satuan: '', jumlah: 1, keterangan: '' })
 const jenisTransaksiOptions = [
   { label: 'RUKEM', value: 'RUKEM' },
@@ -228,6 +301,7 @@ const jenisTransaksiOptions = [
   { label: 'Sumbangan Warga', value: 'SUMBANGAN_WARGA' },
 ]
 const form = reactive({ jenis_transaksi: 'RUKEM', kegiatan: '', rincian: [rincianBaru()] })
+const formEditHeader = reactive({ id: null, kegiatan: '' })
 
 const rupiah = (nilai) =>
   new Intl.NumberFormat('id-ID', {
@@ -239,6 +313,12 @@ const formatTanggal = (nilai) =>
   new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(
     new Date(`${nilai}T00:00:00`),
   )
+const adalahBulanBerjalan = (tanggal) => {
+  const [tahun, bulan] = tanggal.split('-').map(Number)
+  const hariIni = new Date()
+
+  return tahun === hariIni.getFullYear() && bulan === hariIni.getMonth() + 1
+}
 const formatNominal = (index, nilai) => {
   form.rincian[index].harga_satuan = String(nilai || '')
     .replace(/\D/g, '')
@@ -271,6 +351,106 @@ const getPengeluaran = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const bukaEditHeader = (item) => {
+  formEditHeader.id = item.id
+  formEditHeader.kegiatan = item.kegiatan || ''
+  dialogEditHeader.value = true
+}
+
+const simpanEditHeader = async () => {
+  if (!formEditHeader.kegiatan) {
+    $q.notify({
+      type: 'warning',
+      message: 'Kegiatan wajib diisi.',
+      position: 'top',
+    })
+    return
+  }
+
+  menyimpanEditHeader.value = true
+  try {
+    const response = await api.patch(`/v1/pengeluaran/${formEditHeader.id}/header`, {
+      kegiatan: formEditHeader.kegiatan,
+    })
+    $q.notify({
+      type: 'positive',
+      message: response.data?.message || 'Header pengeluaran berhasil diperbarui',
+      position: 'top',
+    })
+    dialogEditHeader.value = false
+    await getPengeluaran()
+  } catch (error) {
+    $q.notify({
+      type: 'negative',
+      message: error.response?.data?.message || 'Gagal memperbarui header pengeluaran',
+      position: 'top',
+    })
+  } finally {
+    menyimpanEditHeader.value = false
+  }
+}
+
+const hapusHeader = (item) => {
+  $q.dialog({
+    title: 'Hapus transaksi?',
+    message: 'Header pengeluaran dan seluruh rinciannya akan dihapus.',
+    persistent: true,
+    ok: { label: 'Hapus', color: 'negative', noCaps: true },
+    cancel: { label: 'Batal', flat: true, noCaps: true },
+  }).onOk(async () => {
+    menghapusHeaderId.value = item.id
+    try {
+      const response = await api.delete(`/v1/pengeluaran/header/${item.id}`)
+      $q.notify({
+        type: 'positive',
+        message: response.data?.message || 'Header pengeluaran berhasil dihapus',
+        position: 'top',
+      })
+      await getPengeluaran()
+    } catch (error) {
+      $q.notify({
+        type: 'negative',
+        message: error.response?.data?.message || 'Gagal menghapus header pengeluaran',
+        position: 'top',
+      })
+    } finally {
+      menghapusHeaderId.value = null
+    }
+  })
+}
+
+const hapusRincianTersimpan = (item, rinci) => {
+  $q.dialog({
+    title: 'Hapus rincian?',
+    message:
+      item.rincis.length === 1
+        ? 'Ini adalah rincian terakhir. Transaksi pengeluaran juga akan dihapus.'
+        : 'Rincian pengeluaran ini akan dihapus.',
+    persistent: true,
+    ok: { label: 'Hapus', color: 'negative', noCaps: true },
+    cancel: { label: 'Batal', flat: true, noCaps: true },
+  }).onOk(async () => {
+    menghapusRincianId.value = rinci.id
+    try {
+      const response = await api.delete(`/v1/pengeluaran/rincian/${rinci.id}`)
+      $q.notify({
+        type: 'positive',
+        message: response.data?.message || 'Rincian pengeluaran berhasil dihapus',
+        position: 'top',
+      })
+      await getPengeluaran()
+    } catch (error) {
+      $q.notify({
+        type: 'negative',
+        message: error.response?.data?.message || 'Gagal menghapus rincian pengeluaran',
+        position: 'top',
+      })
+    } finally {
+      menghapusRincianId.value = null
+    }
+  })
 }
 
 const simpan = async () => {
