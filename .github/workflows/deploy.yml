@@ -42,13 +42,19 @@ jobs:
         run: npm ci
 
       # ==========================================
-      # 4. Build Quasar PWA
+      # 4. Clean old build
+      # ==========================================
+      - name: Clean old build
+        run: rm -rf dist
+
+      # ==========================================
+      # 5. Build Quasar PWA
       # ==========================================
       - name: Build Quasar PWA
         run: npx quasar build -m pwa
 
       # ==========================================
-      # 5. Detect build output
+      # 6. Detect build directory
       # ==========================================
       - name: Detect Quasar build directory
         id: build
@@ -58,31 +64,55 @@ jobs:
 
           echo "=== BUILD OUTPUT ==="
 
-          if [ -d dist ]; then
-            find dist -maxdepth 4 -type f | head -50
-          else
-            echo "ERROR: Folder dist tidak ditemukan"
+          if [ ! -d "dist" ]; then
+            echo "ERROR: Folder dist tidak ditemukan!"
             exit 1
           fi
+
+          find dist -maxdepth 3 -type f | head -50 || true
 
           if [ -f "dist/pwa/index.html" ]; then
             BUILD_DIR="dist/pwa"
+
           elif [ -f "dist/pwa/www/index.html" ]; then
             BUILD_DIR="dist/pwa/www"
+
+          elif [ -f "dist/spa/index.html" ]; then
+            BUILD_DIR="dist/spa"
+
           else
             echo "ERROR: index.html tidak ditemukan!"
-            echo "Periksa konfigurasi build Quasar."
+            find dist -name index.html || true
             exit 1
           fi
 
-          echo "BUILD_DIR=$BUILD_DIR"
+          echo "Build directory: $BUILD_DIR"
           echo "dir=$BUILD_DIR" >> "$GITHUB_OUTPUT"
 
           echo "=== BUILD CONTENT ==="
           ls -lah "$BUILD_DIR"
 
       # ==========================================
-      # 6. Setup SSH
+      # 7. Validate build
+      # ==========================================
+      - name: Validate build
+        shell: bash
+        env:
+          BUILD_DIR: ${{ steps.build.outputs.dir }}
+        run: |
+          set -euo pipefail
+
+          test -f "$BUILD_DIR/index.html"
+
+          echo "Build validation successful."
+          echo "Source: $BUILD_DIR"
+
+          if [ "$BUILD_DIR" = "dist/spa" ]; then
+            echo "::warning::Output berada di dist/spa. Periksa konfigurasi PWA dan service worker."
+          fi
+
+      # ==========================================
+      # 8. Setup SSH
       # ==========================================
       - name: Setup SSH
         shell: bash
@@ -96,7 +126,9 @@ jobs:
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_PRIVATE_KEY" \
+            > ~/.ssh/id_ed25519
+
           chmod 600 ~/.ssh/id_ed25519
 
           ssh-keyscan -H -p "$SERVER_PORT" \
@@ -105,7 +137,23 @@ jobs:
           chmod 600 ~/.ssh/known_hosts
 
       # ==========================================
-      # 7. Upload PWA to temporary directory
+      # 9. Prepare temporary directory
+      # ==========================================
+      - name: Prepare temporary directory
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          set -euo pipefail
+
+          ssh -p "$SERVER_PORT" \
+            "$SERVER_USER@$SERVER_HOST" \
+            "mkdir -p /tmp/rowo-pwa-deploy"
+
+      # ==========================================
+      # 10. Upload build via rsync
       # ==========================================
       - name: Upload PWA to temporary directory
         shell: bash
@@ -119,10 +167,6 @@ jobs:
 
           echo "Uploading from: $BUILD_DIR"
 
-          ssh -p "$SERVER_PORT" \
-            "$SERVER_USER@$SERVER_HOST" \
-            "mkdir -p /tmp/rowo-pwa-deploy"
-
           rsync -az --delete \
             -e "ssh -p $SERVER_PORT" \
             "$BUILD_DIR/" \
@@ -131,7 +175,7 @@ jobs:
           echo "Upload completed."
 
       # ==========================================
-      # 8. Verify uploaded files
+      # 11. Verify uploaded files
       # ==========================================
       - name: Verify uploaded PWA
         shell: bash
@@ -146,10 +190,10 @@ jobs:
             "$SERVER_USER@$SERVER_HOST" \
             "test -f /tmp/rowo-pwa-deploy/index.html"
 
-          echo "Uploaded PWA verified."
+          echo "Upload verification successful."
 
       # ==========================================
-      # 9. Deploy to aaPanel
+      # 12. Deploy to aaPanel
       # ==========================================
       - name: Deploy to aaPanel web root
         shell: bash
@@ -173,14 +217,32 @@ jobs:
               /www/wwwroot/rowo.udumbara.my.id/ \
               && rm -rf /tmp/rowo-pwa-deploy"
 
-          echo "Deployment to aaPanel completed."
+          echo "Deployment completed."
 
       # ==========================================
-      # 10. Deployment completed
+      # 13. Verify deployment
+      # ==========================================
+      - name: Verify deployed index.html
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          set -euo pipefail
+
+          ssh -p "$SERVER_PORT" \
+            "$SERVER_USER@$SERVER_HOST" \
+            "test -f /www/wwwroot/rowo.udumbara.my.id/index.html"
+
+          echo "Deployed index.html verified."
+
+      # ==========================================
+      # 14. Finish
       # ==========================================
       - name: Deployment completed
         run: |
           echo "======================================"
-          echo " SI RUKEM PWA DEPLOYMENT SUCCESSFUL"
+          echo " SI RUKEM DEPLOYMENT SUCCESSFUL"
           echo "======================================"
           echo "Website: https://rowo.udumbara.my.id"
