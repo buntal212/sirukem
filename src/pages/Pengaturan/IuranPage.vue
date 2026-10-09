@@ -1,12 +1,10 @@
 <template>
   <q-page class="iuran-page">
-
     <!-- =====================================================
          HEADER
     ====================================================== -->
     <div class="page-header">
       <div class="header-content">
-
         <q-btn
           flat
           round
@@ -18,96 +16,62 @@
         />
 
         <div class="header-text">
-          <div class="header-title">
-            Iuran Tahunan
-          </div>
+          <div class="header-title">Iuran Tahunan</div>
 
-          <div class="header-subtitle">
-            Pengaturan total iuran RUKEM warga per tahun
-          </div>
+          <div class="header-subtitle">Pengaturan total iuran RUKEM warga per tahun</div>
         </div>
-
       </div>
     </div>
-
 
     <!-- =====================================================
          CONTENT
     ====================================================== -->
     <div class="page-content">
-
       <!-- ===================================================
            INFO CARD
       ==================================================== -->
-      <q-card
-        flat
-        class="info-card"
-      >
+      <q-card flat class="info-card">
         <q-card-section class="info-card-content">
-
           <div class="info-icon">
-            <q-icon
-              name="payments"
-              size="30px"
-            />
+            <q-icon name="payments" size="30px" />
           </div>
 
           <div class="info-content">
-            <div class="info-title">
-              Pengaturan Iuran RUKEM
-            </div>
+            <div class="info-title">Pengaturan Iuran RUKEM</div>
 
             <div class="info-description">
-              Tentukan total iuran rutin yang harus dibayarkan
-              oleh setiap warga dalam setahun.
+              Tentukan total iuran rutin yang harus dibayarkan oleh setiap warga dalam setahun.
             </div>
           </div>
-
         </q-card-section>
       </q-card>
-
 
       <!-- ===================================================
            FORM CARD
       ==================================================== -->
-      <q-card
-        flat
-        bordered
-        class="form-card"
-      >
-
+      <q-card flat bordered class="form-card">
         <!-- CARD HEADER -->
         <q-card-section class="form-header">
-
           <div class="form-header-icon">
             <q-icon name="tune" />
           </div>
 
           <div>
-            <div class="form-title">
-              Pengaturan Iuran
-            </div>
+            <div class="form-title">Pengaturan Iuran</div>
 
-            <div class="form-subtitle">
-              Atur total iuran warga dalam setahun
-            </div>
+            <div class="form-subtitle">Atur total iuran warga dalam setahun</div>
           </div>
-
         </q-card-section>
 
         <q-separator />
-
 
         <!-- =================================================
              FORM
         ================================================== -->
         <q-card-section class="form-content">
-
           <q-form @submit.prevent="simpan">
-
             <!-- TOTAL IURAN TAHUNAN -->
             <div class="field-group">
-
               <div class="field-label">
                 Total Iuran Dalam Setahun
                 <span class="required">*</span>
@@ -123,32 +87,21 @@
                 @update:model-value="formatNominal"
               >
                 <template #prepend>
-                  <q-icon
-                    name="payments"
-                    color="primary"
-                  />
+                  <q-icon name="payments" color="primary" />
                 </template>
               </q-input>
 
-              <div class="field-help">
-                Total iuran yang dibayarkan setiap warga dalam setahun.
-              </div>
-
+              <div class="field-help">Total iuran yang dibayarkan setiap warga dalam setahun.</div>
             </div>
 
             <!-- =================================================
                  PREVIEW
             ================================================== -->
             <div class="preview-section">
-
-              <div class="preview-label">
-                Ringkasan
-              </div>
+              <div class="preview-label">Ringkasan</div>
 
               <div class="preview-card">
-
                 <div class="preview-top">
-
                   <div class="preview-icon">
                     <q-icon name="account_balance_wallet" />
                   </div>
@@ -159,27 +112,15 @@
                       :label="form.aktif ? 'Aktif' : 'Nonaktif'"
                     />
                   </div>
-
                 </div>
 
+                <div class="preview-small">Total Iuran RUKEM / Tahun</div>
 
-                <div class="preview-small">
-                  Total Iuran RUKEM / Tahun
-                </div>
+                <div class="preview-nominal">Rp {{ form.nominal || '0' }}</div>
 
-                <div class="preview-nominal">
-                  Rp {{ form.nominal || '0' }}
-                </div>
-
-
-                <q-separator
-                  class="q-my-md"
-                  color="white"
-                />
-
+                <q-separator class="q-my-md" color="white" />
 
                 <div class="preview-details">
-
                   <!-- <div class="preview-detail">
                     <span>Mulai Berlaku</span>
 
@@ -195,19 +136,14 @@
                       Tanggal {{ form.jatuh_tempo || '-' }}
                     </strong>
                   </div> -->
-
                 </div>
-
               </div>
-
             </div>
-
 
             <!-- =================================================
                  BUTTON
             ================================================== -->
             <div class="button-wrapper">
-
               <q-btn
                 outline
                 no-caps
@@ -228,20 +164,13 @@
                 class="action-button save-button"
                 :loading="miuranStore.saving"
               />
-
             </div>
-
           </q-form>
-
         </q-card-section>
-
       </q-card>
-
     </div>
-
   </q-page>
 </template>
-
 
 <script setup>
 import { reactive, onMounted } from 'vue'
@@ -270,26 +199,20 @@ const form = reactive({
   aktif: true,
 })
 
-
 // =========================================================
 // FORMAT NOMINAL
 // =========================================================
 
 const formatNominal = (value) => {
-
   if (!value) {
     form.nominal = ''
     return
   }
 
-  const angka = String(value)
-    .replace(/\D/g, '')
+  const angka = String(value).replace(/\D/g, '')
 
-  form.nominal = angka
-    ? new Intl.NumberFormat('id-ID').format(Number(angka))
-    : ''
+  form.nominal = angka ? new Intl.NumberFormat('id-ID').format(Number(angka)) : ''
 }
-
 
 // =========================================================
 // FORMAT TANGGAL
@@ -313,19 +236,15 @@ const formatNominal = (value) => {
 //   ).format(date)
 // }
 
-
 // =========================================================
 // BACK
 // =========================================================
 
 const goBack = () => {
-
   router.push({
     name: 'pengaturan',
   })
-
 }
-
 
 // =========================================================
 // SIMPAN
@@ -333,27 +252,21 @@ const goBack = () => {
 
 const simpan = async () => {
   try {
-    const nominal = Number(
-      String(form.nominal).replace(/\./g, '')
-    )
+    const nominal = Number(String(form.nominal).replace(/\./g, ''))
 
     const response = await miuranStore.saveMiuran(nominal)
 
     $q.notify({
       type: 'positive',
       position: 'top',
-      message:
-        response?.message ||
-        'Total iuran tahunan berhasil disimpan',
+      message: response?.message || 'Total iuran tahunan berhasil disimpan',
       icon: 'check_circle',
     })
   } catch (error) {
     $q.notify({
       type: 'negative',
       position: 'top',
-      message:
-        error.response?.data?.message ||
-        'Gagal menyimpan total iuran tahunan',
+      message: error.response?.data?.message || 'Gagal menyimpan total iuran tahunan',
       icon: 'error',
     })
   }
@@ -364,9 +277,7 @@ onMounted(async () => {
     const data = await miuranStore.getMiuran()
 
     if (data) {
-      form.nominal = new Intl.NumberFormat('id-ID').format(
-        Number(data.nominaliuran)
-      )
+      form.nominal = new Intl.NumberFormat('id-ID').format(Number(data.nominaliuran))
     }
   } catch (error) {
     console.error('Gagal mengambil total iuran tahunan:', error)
@@ -374,9 +285,7 @@ onMounted(async () => {
 })
 </script>
 
-
 <style scoped>
-
 /* =========================================================
    PAGE
 ========================================================= */
@@ -389,53 +298,29 @@ onMounted(async () => {
   color: #102a43;
 }
 
-
 /* =========================================================
    HEADER
 ========================================================= */
 
 .page-header {
+  padding: 22px 16px 50px;
 
-  padding:
-    22px
-    20px
-    50px;
+  background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #1e88e5 100%);
 
-  background:
-    linear-gradient(
-      135deg,
-      #0d47a1 0%,
-      #1565c0 50%,
-      #1e88e5 100%
-    );
-
-  border-radius:
-    0
-    0
-    30px
-    30px;
+  border-radius: 0 0 30px 30px;
 }
 
-
 .header-content {
-
-  max-width: 700px;
-
-  margin: auto;
-
   display: flex;
 
   align-items: center;
 }
 
-
 .back-button {
   margin-right: 12px;
 }
 
-
 .header-title {
-
   color: white;
 
   font-size: 24px;
@@ -443,74 +328,45 @@ onMounted(async () => {
   font-weight: 800;
 }
 
-
 .header-subtitle {
-
   margin-top: 2px;
 
-  color:
-    rgba(
-      255,
-      255,
-      255,
-      0.8
-    );
+  color: rgba(255, 255, 255, 0.8);
 
   font-size: 13px;
 }
-
 
 /* =========================================================
    CONTENT
 ========================================================= */
 
 .page-content {
-
   position: relative;
 
   z-index: 2;
 
   max-width: 700px;
 
-  margin:
-    -25px
-    auto
-    0;
+  margin: -25px auto 0;
 
-  padding:
-    0
-    20px
-    35px;
+  padding: 0 20px 35px;
 }
-
 
 /* =========================================================
    INFO CARD
 ========================================================= */
 
 .info-card {
-
   margin-bottom: 16px;
 
   border-radius: 18px;
 
   background: white;
 
-  box-shadow:
-    0
-    6px
-    20px
-    rgba(
-      23,
-      76,
-      130,
-      0.09
-    );
+  box-shadow: 0 6px 20px rgba(23, 76, 130, 0.09);
 }
 
-
 .info-card-content {
-
   display: flex;
 
   align-items: center;
@@ -518,9 +374,7 @@ onMounted(async () => {
   padding: 18px;
 }
 
-
 .info-icon {
-
   width: 58px;
   height: 58px;
 
@@ -541,14 +395,11 @@ onMounted(async () => {
   background: #e0f2f1;
 }
 
-
 .info-content {
   flex: 1;
 }
 
-
 .info-title {
-
   font-size: 17px;
 
   font-weight: 700;
@@ -556,9 +407,7 @@ onMounted(async () => {
   color: #102a43;
 }
 
-
 .info-description {
-
   margin-top: 4px;
 
   font-size: 12px;
@@ -568,42 +417,27 @@ onMounted(async () => {
   color: #78909c;
 }
 
-
 /* =========================================================
    FORM CARD
 ========================================================= */
 
 .form-card {
-
   overflow: hidden;
 
   border-radius: 18px;
 
-  border:
-    1px solid
-    #e4edf7;
+  border: 1px solid #e4edf7;
 
   background: white;
 
-  box-shadow:
-    0
-    5px
-    18px
-    rgba(
-      23,
-      76,
-      130,
-      0.05
-    );
+  box-shadow: 0 5px 18px rgba(23, 76, 130, 0.05);
 }
-
 
 /* =========================================================
    FORM HEADER
 ========================================================= */
 
 .form-header {
-
   display: flex;
 
   align-items: center;
@@ -611,9 +445,7 @@ onMounted(async () => {
   padding: 18px;
 }
 
-
 .form-header-icon {
-
   width: 42px;
   height: 42px;
 
@@ -634,9 +466,7 @@ onMounted(async () => {
   font-size: 23px;
 }
 
-
 .form-title {
-
   font-size: 16px;
 
   font-weight: 700;
@@ -644,16 +474,13 @@ onMounted(async () => {
   color: #12345b;
 }
 
-
 .form-subtitle {
-
   margin-top: 2px;
 
   font-size: 11px;
 
   color: #78909c;
 }
-
 
 /* =========================================================
    FORM CONTENT
@@ -663,14 +490,11 @@ onMounted(async () => {
   padding: 20px;
 }
 
-
 .field-group {
   margin-bottom: 18px;
 }
 
-
 .field-label {
-
   margin-bottom: 7px;
 
   font-size: 13px;
@@ -680,14 +504,11 @@ onMounted(async () => {
   color: #455a64;
 }
 
-
 .required {
   color: #e53935;
 }
 
-
 .field-help {
-
   margin-top: 6px;
 
   padding-left: 3px;
@@ -699,13 +520,11 @@ onMounted(async () => {
   color: #90a4ae;
 }
 
-
 /* =========================================================
    STATUS
 ========================================================= */
 
 .status-box {
-
   margin-top: 5px;
 
   padding: 15px;
@@ -720,22 +539,16 @@ onMounted(async () => {
 
   background: #f5f9ff;
 
-  border:
-    1px solid
-    #e3edf7;
+  border: 1px solid #e3edf7;
 }
 
-
 .status-information {
-
   display: flex;
 
   align-items: center;
 }
 
-
 .status-icon {
-
   width: 42px;
   height: 42px;
 
@@ -756,9 +569,7 @@ onMounted(async () => {
   font-size: 24px;
 }
 
-
 .status-title {
-
   font-size: 13px;
 
   font-weight: 700;
@@ -766,16 +577,13 @@ onMounted(async () => {
   color: #37474f;
 }
 
-
 .status-description {
-
   margin-top: 2px;
 
   font-size: 10px;
 
   color: #90a4ae;
 }
-
 
 /* =========================================================
    PREVIEW
@@ -785,9 +593,7 @@ onMounted(async () => {
   margin-top: 25px;
 }
 
-
 .preview-label {
-
   margin-bottom: 8px;
 
   font-size: 13px;
@@ -797,9 +603,7 @@ onMounted(async () => {
   color: #455a64;
 }
 
-
 .preview-card {
-
   padding: 20px;
 
   overflow: hidden;
@@ -810,28 +614,12 @@ onMounted(async () => {
 
   color: white;
 
-  background:
-    linear-gradient(
-      135deg,
-      #00897b,
-      #26a69a
-    );
+  background: linear-gradient(135deg, #00897b, #26a69a);
 
-  box-shadow:
-    0
-    8px
-    20px
-    rgba(
-      0,
-      137,
-      123,
-      0.20
-    );
+  box-shadow: 0 8px 20px rgba(0, 137, 123, 0.2);
 }
 
-
 .preview-card::after {
-
   content: '';
 
   position: absolute;
@@ -846,18 +634,10 @@ onMounted(async () => {
 
   border-radius: 50%;
 
-  background:
-    rgba(
-      255,
-      255,
-      255,
-      0.10
-    );
+  background: rgba(255, 255, 255, 0.1);
 }
 
-
 .preview-top {
-
   position: relative;
 
   z-index: 2;
@@ -869,9 +649,7 @@ onMounted(async () => {
   justify-content: space-between;
 }
 
-
 .preview-icon {
-
   width: 45px;
 
   height: 45px;
@@ -884,20 +662,12 @@ onMounted(async () => {
 
   border-radius: 13px;
 
-  background:
-    rgba(
-      255,
-      255,
-      255,
-      0.18
-    );
+  background: rgba(255, 255, 255, 0.18);
 
   font-size: 24px;
 }
 
-
 .preview-small {
-
   position: relative;
 
   z-index: 2;
@@ -909,9 +679,7 @@ onMounted(async () => {
   opacity: 0.85;
 }
 
-
 .preview-nominal {
-
   position: relative;
 
   z-index: 2;
@@ -923,17 +691,13 @@ onMounted(async () => {
   font-weight: 800;
 }
 
-
 .preview-details {
-
   position: relative;
 
   z-index: 2;
 }
 
-
 .preview-detail {
-
   padding: 4px 0;
 
   display: flex;
@@ -945,18 +709,15 @@ onMounted(async () => {
   font-size: 11px;
 }
 
-
 .preview-detail span {
   opacity: 0.8;
 }
-
 
 /* =========================================================
    BUTTON
 ========================================================= */
 
 .button-wrapper {
-
   margin-top: 25px;
 
   display: flex;
@@ -966,76 +727,50 @@ onMounted(async () => {
   gap: 10px;
 }
 
-
 .action-button {
-
   min-height: 42px;
 
-  padding:
-    0
-    18px;
+  padding: 0 18px;
 
   border-radius: 10px;
 }
 
-
 .save-button {
   min-width: 180px;
 }
-
 
 /* =========================================================
    MOBILE
 ========================================================= */
 
 @media (max-width: 600px) {
-
   .page-header {
+    padding: 20px 15px 45px;
 
-    padding:
-      20px
-      15px
-      45px;
-
-    border-radius:
-      0
-      0
-      25px
-      25px;
+    border-radius: 0 0 25px 25px;
   }
-
 
   .header-title {
     font-size: 21px;
   }
 
-
   .header-subtitle {
     font-size: 11px;
   }
 
-
   .page-content {
-
-    padding:
-      0
-      14px
-      25px;
+    padding: 0 14px 25px;
   }
-
 
   .info-card {
     border-radius: 16px;
   }
 
-
   .info-card-content {
     padding: 15px;
   }
 
-
   .info-icon {
-
     width: 50px;
 
     height: 50px;
@@ -1045,80 +780,62 @@ onMounted(async () => {
     border-radius: 14px;
   }
 
-
   .info-title {
     font-size: 15px;
   }
-
 
   .info-description {
     font-size: 10px;
   }
 
-
   .form-card {
     border-radius: 16px;
   }
-
 
   .form-content {
     padding: 16px;
   }
 
-
   .preview-nominal {
     font-size: 24px;
   }
-
 
   .button-wrapper {
     flex-direction: column-reverse;
   }
 
-
   .action-button {
-
     width: 100%;
 
     min-height: 45px;
   }
 
-
   .save-button {
     min-width: 0;
   }
-
 }
-
 
 /* =========================================================
    VERY SMALL MOBILE
 ========================================================= */
 
 @media (max-width: 360px) {
-
   .page-content {
-
     padding-left: 10px;
 
     padding-right: 10px;
   }
 
-
   .preview-card {
     padding: 16px;
   }
-
 
   .preview-nominal {
     font-size: 21px;
   }
 
-
   .preview-detail {
     font-size: 10px;
   }
-
 }
-
 </style>

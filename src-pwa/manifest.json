@@ -1,4 +1,8 @@
 {
+  "id": "/",
+  "name": "SI RUKEM Desa Rowo",
+  "short_name": "SI RUKEM",
+  "start_url": "/",
   "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#027be3",

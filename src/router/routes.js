@@ -32,6 +32,42 @@ const routes = [
       ...iuranrukemRoutes,
       ...laporanRoutes,
       ...pengeluaranRoutes,
+      {
+        path: 'uang-masuk-kotak-masjid',
+        name: 'uang-masuk-kotak-masjid',
+        component: () => import('@/pages/PemasukanKotakMasjid/IndexPage.vue'),
+        meta: {
+          title: 'Uang Pemasukkan Masjid',
+          requiresAuth: true,
+        },
+      },
+      {
+        path: 'pengeluaran-masjid',
+        name: 'pengeluaran-masjid',
+        component: () => import('@/pages/PengeluaranMasjid/IndexPage.vue'),
+        meta: {
+          title: 'Pengeluaran Masjid',
+          requiresAuth: true,
+        },
+      },
+      {
+        path: 'laporan-pengeluaran-masjid',
+        name: 'laporan-pengeluaran-masjid',
+        component: () => import('@/pages/LaporanPengeluaranMasjid/IndexPage.vue'),
+        meta: {
+          title: 'Laporan Pengeluaran Masjid',
+          requiresAuth: true,
+        },
+      },
+      {
+        path: 'laporan-kas-umum-masjid',
+        name: 'laporan-kas-umum-masjid',
+        component: () => import('@/pages/LaporanKasUmumMasjid/IndexPage.vue'),
+        meta: {
+          title: 'Laporan Kas Umum Masjid',
+          requiresAuth: true,
+        },
+      },
     ],
   },
 

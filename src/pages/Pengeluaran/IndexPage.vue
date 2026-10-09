@@ -1,7 +1,7 @@
 <template>
   <q-page class="bg-grey-2">
     <div class="header">
-      <div class="row items-center no-wrap content">
+      <div class="row items-center no-wrap">
         <q-btn
           flat
           round
@@ -73,6 +73,7 @@
             </div>
             <div class="text-weight-bold text-primary">- {{ rupiah(item.total_nominal) }}</div>
             <q-btn
+              v-if="adalahBulanBerjalan(item.tanggal_pengeluaran)"
               flat
               round
               dense
@@ -111,7 +112,7 @@
                   <q-item-section>
                     <q-item-label>{{ rinci.keterangan || 'Tanpa keterangan' }}</q-item-label>
                     <q-item-label caption>
-                      {{ rupiah(rinci.harga_satuan) }} x {{ rinci.jumlah }}
+                      {{ rupiah(rinci.harga_satuan) }} x {{ rinci.jumlah }} {{ rinci.satuan }}
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side class="text-weight-bold text-primary">
@@ -187,7 +188,7 @@
               </q-btn>
             </div>
             <div class="row q-col-gutter-sm">
-              <div class="col-7">
+              <div class="col-5">
                 <q-input
                   v-model="rinci.harga_satuan"
                   dense
@@ -198,7 +199,7 @@
                   @update:model-value="formatNominal(index, $event)"
                 />
               </div>
-              <div class="col-5">
+              <div class="col-3">
                 <q-input
                   v-model.number="rinci.jumlah"
                   dense
@@ -207,6 +208,9 @@
                   min="1"
                   label="Jumlah"
                 />
+              </div>
+              <div class="col-4">
+                <q-input v-model.trim="rinci.satuan" dense outlined label="Satuan" />
               </div>
             </div>
             <q-input
@@ -294,7 +298,7 @@ const menghapusHeaderId = ref(null)
 const dialog = ref(false)
 const dialogEditHeader = ref(false)
 const menyimpanEditHeader = ref(false)
-const rincianBaru = () => ({ harga_satuan: '', jumlah: 1, keterangan: '' })
+const rincianBaru = () => ({ harga_satuan: '', jumlah: 1, satuan: '', keterangan: '' })
 const jenisTransaksiOptions = [
   { label: 'RUKEM', value: 'RUKEM' },
   { label: 'Kotak Masjid', value: 'KOTAK_MASJID' },
@@ -475,6 +479,7 @@ const simpan = async () => {
       rincian: form.rincian.map((rinci) => ({
         harga_satuan: Number(rinci.harga_satuan.replace(/\./g, '')),
         jumlah: Number(rinci.jumlah),
+        satuan: rinci.satuan,
         keterangan: rinci.keterangan || null,
       })),
     })

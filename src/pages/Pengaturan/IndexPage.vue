@@ -1,10 +1,8 @@
 <template>
   <q-page class="settings-page">
-
     <!-- HEADER -->
     <div class="settings-header">
       <div class="header-content">
-
         <q-btn
           flat
           round
@@ -16,143 +14,81 @@
         />
 
         <div>
-          <div class="header-title">
-            Pengaturan
-          </div>
+          <div class="header-title">Pengaturan</div>
 
-          <div class="header-subtitle">
-            Pengaturan Sistem SI RUKEM
-          </div>
+          <div class="header-subtitle">Pengaturan Sistem SI RUKEM</div>
         </div>
-
       </div>
     </div>
 
-
     <!-- CONTENT -->
     <div class="settings-content">
-
       <!-- TITLE -->
       <div class="section-header">
-        <div class="section-title">
-          Pengaturan Sistem
-        </div>
+        <div class="section-title">Pengaturan Sistem</div>
 
-        <div class="section-description">
-          Kelola konfigurasi dan hak akses aplikasi
-        </div>
+        <div class="section-description">Kelola konfigurasi dan hak akses aplikasi</div>
       </div>
-
 
       <!-- =====================================================
            IURAN TAHUNAN
       ====================================================== -->
 
-      <q-card
-        flat
-        bordered
-        class="setting-card cursor-pointer"
-        @click="openIuran"
-      >
+      <q-card flat bordered class="setting-card cursor-pointer" @click="openIuran">
         <q-card-section class="setting-card-content">
-
           <div class="setting-icon iuran-icon">
-            <q-icon
-              name="payments"
-              size="30px"
-            />
+            <q-icon name="payments" size="30px" />
           </div>
 
           <div class="setting-information">
+            <div class="setting-title">Iuran Tahunan</div>
 
-            <div class="setting-title">
-              Iuran Tahunan
-            </div>
-
-            <div class="setting-description">
-              Atur total iuran rutin warga dalam setahun
-            </div>
-
+            <div class="setting-description">Atur total iuran rutin warga dalam setahun</div>
           </div>
 
-          <q-icon
-            name="chevron_right"
-            size="26px"
-            color="grey-6"
-          />
-
+          <q-icon name="chevron_right" size="26px" color="grey-6" />
         </q-card-section>
       </q-card>
-
 
       <!-- =====================================================
            HAK AKSES
       ====================================================== -->
 
-      <q-card
-        flat
-        bordered
-        class="setting-card cursor-pointer"
-        @click="openHakAkses"
-      >
+      <q-card flat bordered class="setting-card cursor-pointer" @click="openHakAkses">
         <q-card-section class="setting-card-content">
-
           <div class="setting-icon akses-icon">
-            <q-icon
-              name="admin_panel_settings"
-              size="30px"
-            />
+            <q-icon name="admin_panel_settings" size="30px" />
           </div>
 
           <div class="setting-information">
-
-            <div class="setting-title">
-              Hak Akses
-            </div>
+            <div class="setting-title">Hak Akses</div>
 
             <div class="setting-description">
               Kelola pengguna, role dan izin akses menu aplikasi
             </div>
-
           </div>
 
-          <q-icon
-            name="chevron_right"
-            size="26px"
-            color="grey-6"
-          />
-
+          <q-icon name="chevron_right" size="26px" color="grey-6" />
         </q-card-section>
       </q-card>
 
-
       <!-- INFO -->
       <div class="information-box">
-
-        <q-icon
-          name="info"
-          size="22px"
-          color="primary"
-        />
+        <q-icon name="info" size="22px" color="primary" />
 
         <div>
-          Perubahan pada pengaturan sistem dapat mempengaruhi
-          proses transaksi dan akses pengguna SI RUKEM.
+          Perubahan pada pengaturan sistem dapat mempengaruhi proses transaksi dan akses pengguna SI
+          RUKEM.
         </div>
-
       </div>
-
     </div>
-
   </q-page>
 </template>
-
 
 <script setup>
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-
 
 // =========================================================
 // KEMBALI
@@ -161,7 +97,6 @@ const router = useRouter()
 const goBack = () => {
   router.push('/')
 }
-
 
 // =========================================================
 // IURAN TAHUNAN
@@ -172,7 +107,6 @@ const openIuran = () => {
     name: 'pengaturan-iuran',
   })
 }
-
 
 // =========================================================
 // HAK AKSES
@@ -185,9 +119,7 @@ const openHakAkses = () => {
 }
 </script>
 
-
 <style scoped>
-
 /* =========================================================
    PAGE
 ========================================================= */
@@ -198,29 +130,19 @@ const openHakAkses = () => {
   color: #102a43;
 }
 
-
 /* =========================================================
    HEADER
 ========================================================= */
 
 .settings-header {
-  padding: 22px 20px 45px;
+  padding: 22px 16px 45px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #0d47a1 0%,
-      #1565c0 50%,
-      #1e88e5 100%
-    );
+  background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #1e88e5 100%);
 
   border-radius: 0 0 30px 30px;
 }
 
 .header-content {
-  max-width: 700px;
-  margin: auto;
-
   display: flex;
   align-items: center;
 }
@@ -243,7 +165,6 @@ const openHakAkses = () => {
   font-size: 13px;
 }
 
-
 /* =========================================================
    CONTENT
 ========================================================= */
@@ -253,15 +174,11 @@ const openHakAkses = () => {
 
   margin: -20px auto 0;
 
-  padding:
-    0
-    20px
-    30px;
+  padding: 0 20px 30px;
 
   position: relative;
   z-index: 2;
 }
-
 
 /* =========================================================
    SECTION HEADER
@@ -276,9 +193,7 @@ const openHakAkses = () => {
 
   margin-bottom: 16px;
 
-  box-shadow:
-    0 5px 20px
-    rgba(23, 76, 130, 0.08);
+  box-shadow: 0 5px 20px rgba(23, 76, 130, 0.08);
 }
 
 .section-title {
@@ -296,7 +211,6 @@ const openHakAkses = () => {
   color: #78909c;
 }
 
-
 /* =========================================================
    SETTING CARD
 ========================================================= */
@@ -306,15 +220,11 @@ const openHakAkses = () => {
 
   border-radius: 18px;
 
-  border:
-    1px solid
-    #e4edf7;
+  border: 1px solid #e4edf7;
 
   background: white;
 
-  box-shadow:
-    0 5px 18px
-    rgba(23, 76, 130, 0.05);
+  box-shadow: 0 5px 18px rgba(23, 76, 130, 0.05);
 
   transition:
     transform 0.2s ease,
@@ -327,15 +237,12 @@ const openHakAkses = () => {
 
   border-color: #bbdefb;
 
-  box-shadow:
-    0 9px 24px
-    rgba(21, 101, 192, 0.12);
+  box-shadow: 0 9px 24px rgba(21, 101, 192, 0.12);
 }
 
 .setting-card:active {
   transform: scale(0.99);
 }
-
 
 /* =========================================================
    CARD CONTENT
@@ -350,7 +257,6 @@ const openHakAkses = () => {
 
   align-items: center;
 }
-
 
 /* =========================================================
    ICON
@@ -372,7 +278,6 @@ const openHakAkses = () => {
   justify-content: center;
 }
 
-
 /* IURAN */
 
 .iuran-icon {
@@ -380,14 +285,12 @@ const openHakAkses = () => {
   background: #e0f2f1;
 }
 
-
 /* HAK AKSES */
 
 .akses-icon {
   color: #7e57c2;
   background: #ede7f6;
 }
-
 
 /* =========================================================
    INFORMATION
@@ -416,7 +319,6 @@ const openHakAkses = () => {
   color: #78909c;
 }
 
-
 /* =========================================================
    INFORMATION BOX
 ========================================================= */
@@ -443,24 +345,15 @@ const openHakAkses = () => {
   line-height: 1.5;
 }
 
-
 /* =========================================================
    MOBILE
 ========================================================= */
 
 @media (max-width: 600px) {
-
   .settings-header {
-    padding:
-      20px
-      15px
-      40px;
+    padding: 20px 15px 40px;
 
-    border-radius:
-      0
-      0
-      25px
-      25px;
+    border-radius: 0 0 25px 25px;
   }
 
   .header-title {
@@ -472,10 +365,7 @@ const openHakAkses = () => {
   }
 
   .settings-content {
-    padding:
-      0
-      14px
-      25px;
+    padding: 0 14px 25px;
   }
 
   .section-header {
@@ -524,16 +414,13 @@ const openHakAkses = () => {
   .setting-description {
     font-size: 11px;
   }
-
 }
-
 
 /* =========================================================
    VERY SMALL MOBILE
 ========================================================= */
 
 @media (max-width: 360px) {
-
   .settings-content {
     padding-left: 10px;
     padding-right: 10px;
@@ -553,7 +440,5 @@ const openHakAkses = () => {
   .setting-description {
     font-size: 10px;
   }
-
 }
-
 </style>

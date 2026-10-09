@@ -92,15 +92,15 @@
           </q-card-section>
         </q-card>
 
-        <!-- SALDO KOTAK MASJID -->
+        <!-- SALDO KOTAK AMAL -->
         <q-card flat class="balance-card balance-masjid">
           <q-card-section class="balance-content">
             <div class="balance-icon">
-              <q-icon name="mosque" />
+              <q-icon name="savings" />
             </div>
 
             <div class="balance-info">
-              <div class="balance-label">Kotak Masjid</div>
+              <div class="balance-label">Kotak Amal</div>
 
               <q-skeleton
                 v-if="saldoLoading"
@@ -109,22 +109,22 @@
                 height="28px"
                 class="balance-skeleton"
               />
-              <div v-else class="balance-value">Rp {{ formatRupiah(saldoMasjid) }}</div>
+              <div v-else class="balance-value">Rp {{ formatRupiah(saldoKotakAmal) }}</div>
 
-              <div class="balance-description">Saldo Kotak Masjid</div>
+              <div class="balance-description">Saldo Dana Kotak Amal</div>
             </div>
           </q-card-section>
         </q-card>
 
-        <!-- SALDO BANTUAN -->
+        <!-- SALDO PEMBANGUNAN MASJID -->
         <q-card flat class="balance-card balance-bantuan">
           <q-card-section class="balance-content">
             <div class="balance-icon">
-              <q-icon name="volunteer_activism" />
+              <q-icon name="construction" />
             </div>
 
             <div class="balance-info">
-              <div class="balance-label">Saldo Bantuan</div>
+              <div class="balance-label">Pembangunan Masjid</div>
 
               <q-skeleton
                 v-if="saldoLoading"
@@ -133,9 +133,9 @@
                 height="28px"
                 class="balance-skeleton"
               />
-              <div v-else class="balance-value">Rp {{ formatRupiah(saldoBantuan) }}</div>
+              <div v-else class="balance-value">Rp {{ formatRupiah(saldoPembangunanMasjid) }}</div>
 
-              <div class="balance-description">Dana Bantuan Sosial</div>
+              <div class="balance-description">Saldo Dana Pembangunan</div>
             </div>
           </q-card-section>
         </q-card>
@@ -265,27 +265,36 @@ const currentYear = computed(() => {
 // =========================================================
 
 const saldoRukem = ref(0)
-const saldoMasjid = ref(8750000)
-const saldoBantuan = ref(4250000)
+const saldoKotakAmal = ref(0)
+const saldoPembangunanMasjid = ref(0)
 const saldoLoading = ref(true)
 
 const formatRupiah = (value) => {
   return new Intl.NumberFormat('id-ID').format(value || 0)
 }
 
-const getSaldoRukem = async () => {
+const getSaldoDashboard = async () => {
   try {
-    const response = await api.get('/v1/dashboard/saldo-rukem')
+    const [rukemResponse, masjidResponse] = await Promise.all([
+      api.get('/v1/dashboard/saldo-rukem'),
+      api.get('/v1/dashboard/saldo-kotak-masjid'),
+    ])
 
-    saldoRukem.value = Number(response.data?.data?.saldo_rukem ?? 0)
+    saldoRukem.value = Number(rukemResponse.data?.data?.saldo_rukem ?? 0)
+    saldoKotakAmal.value = Number(
+      masjidResponse.data?.data?.saldo_per_jenis?.KOTAK_AMAL?.saldo ?? 0,
+    )
+    saldoPembangunanMasjid.value = Number(
+      masjidResponse.data?.data?.saldo_per_jenis?.PEMBANGUNAN_MASJID?.saldo ?? 0,
+    )
   } catch (error) {
-    console.error('GAGAL MENGAMBIL SALDO RUKEM:', error)
+    console.error('GAGAL MENGAMBIL SALDO DASHBOARD:', error)
   } finally {
     saldoLoading.value = false
   }
 }
 
-onMounted(getSaldoRukem)
+onMounted(getSaldoDashboard)
 
 // =========================================================
 // MENU
@@ -326,6 +335,42 @@ const menus = [
     route: '/pengeluaran',
     color: '#1976d2',
     background: '#e3f2fd',
+  },
+
+  {
+    title: 'Uang Pemasukkan Masjid',
+    description: 'Catat hasil kotak masjid',
+    icon: 'savings',
+    route: '/uang-masuk-kotak-masjid',
+    color: '#00796b',
+    background: '#e0f2f1',
+  },
+
+  {
+    title: 'Pengeluaran Masjid',
+    description: 'Catat pengeluaran dana masjid',
+    icon: 'receipt_long',
+    route: '/pengeluaran-masjid',
+    color: '#e65100',
+    background: '#fff3e0',
+  },
+
+  {
+    title: 'Laporan Pengeluaran Masjid',
+    description: 'Rekap pengeluaran dana masjid',
+    icon: 'summarize',
+    route: '/laporan-pengeluaran-masjid',
+    color: '#e65100',
+    background: '#fff3e0',
+  },
+
+  {
+    title: 'Laporan Kas Umum Masjid',
+    description: 'Arus kas kotak amal dan pembangunan',
+    icon: 'account_balance',
+    route: '/laporan-kas-umum-masjid',
+    color: '#6a1b9a',
+    background: '#f3e5f5',
   },
 
   {

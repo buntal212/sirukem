@@ -5,7 +5,9 @@
         <q-btn flat round dense icon="arrow_back" color="white" class="q-mr-sm" @click="goHome" />
 
         <div class="col">
-          <div class="text-h6 text-weight-bold">{{ page === 'list' ? 'Laporan Iuran Warga' : 'Detail Iuran Warga' }}</div>
+          <div class="text-h6 text-weight-bold">
+            {{ page === 'list' ? 'Laporan Iuran Warga' : 'Detail Iuran Warga' }}
+          </div>
           <div class="text-caption text-white" style="opacity: 0.8">Desa Rowo Leces</div>
         </div>
 
@@ -143,7 +145,5 @@ onMounted(getLaporan)
 }
 
 .laporan-header-content {
-  max-width: 900px;
-  margin: 0 auto;
 }
 </style>

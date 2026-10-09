@@ -1,7 +1,7 @@
 <template>
   <q-page class="bg-grey-2">
     <div class="header">
-      <div class="row items-center no-wrap content">
+      <div class="row items-center no-wrap">
         <q-btn
           flat
           round

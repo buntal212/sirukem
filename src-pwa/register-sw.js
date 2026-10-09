@@ -1,5 +1,24 @@
 import { register } from 'register-service-worker'
 
+const kirimInfoPembaruan = (registration) => {
+  window.pwaUpdateRegistration = registration
+  window.dispatchEvent(
+    new CustomEvent('pwa-pembaruan-tersedia', {
+      detail: registration,
+    }),
+  )
+}
+
+const periksaPembaruan = (registration) => {
+  const cek = () => registration.update().catch(() => {})
+
+  cek()
+  window.setInterval(cek, 60 * 60 * 1000)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') cek()
+  })
+}
+
 // The ready(), registered(), cached(), updatefound() and updated()
 // events passes a ServiceWorkerRegistration instance in their arguments.
 // ServiceWorkerRegistration: https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration
@@ -9,33 +28,35 @@ register(import.meta.env.QUASAR_SERVICE_WORKER_FILE, {
   // to ServiceWorkerContainer.register()
   // https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer/register#Parameter
 
-  // registrationOptions: { scope: './' },
+  registrationOptions: {
+    updateViaCache: 'none',
+  },
 
-  ready (/* registration */) {
+  ready(/* registration */) {
     // console.log('Service worker is active.')
   },
 
-  registered (/* registration */) {
-    // console.log('Service worker has been registered.')
+  registered(registration) {
+    periksaPembaruan(registration)
   },
 
-  cached (/* registration */) {
+  cached(/* registration */) {
     // console.log('Content has been cached for offline use.')
   },
 
-  updatefound (/* registration */) {
+  updatefound(/* registration */) {
     // console.log('New content is downloading.')
   },
 
-  updated (/* registration */) {
-    // console.log('New content is available; please refresh.')
+  updated(registration) {
+    kirimInfoPembaruan(registration)
   },
 
-  offline () {
+  offline() {
     // console.log('No internet connection found. App is running in offline mode.')
   },
 
-  error (/* err */) {
+  error(/* err */) {
     // console.error('Error during service worker registration:', err)
-  }
+  },
 })

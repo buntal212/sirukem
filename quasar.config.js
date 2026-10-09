@@ -24,6 +24,7 @@ export default defineConfig((ctx) => {
     // BUILD
     // =========================================================
     build: {
+      distDir: 'dist/spa',
       target: {
         // browser: 'baseline-widely-available',
         // node: 'node22'
@@ -77,7 +78,7 @@ export default defineConfig((ctx) => {
     framework: {
       config: {},
 
-      plugins: ['Notify','Dialog'],
+      plugins: ['Notify', 'Dialog'],
     },
 
     // =========================================================
@@ -105,6 +106,7 @@ export default defineConfig((ctx) => {
     pwa: {
       workboxMode: 'GenerateSW',
       workboxOptions: {
+        cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
       },
