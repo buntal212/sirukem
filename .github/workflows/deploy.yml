@@ -6,73 +6,162 @@ on:
       - master
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-rowo-pwa
+  cancel-in-progress: false
+
 jobs:
   deploy:
     name: Build & Deploy PWA
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
-      # =========================
-      # 1. Checkout
-      # =========================
+      # ==========================================
+      # 1. Checkout repository
+      # ==========================================
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # =========================
+      # ==========================================
       # 2. Setup Node.js
-      # =========================
+      # ==========================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
-      # =========================
+      # ==========================================
       # 3. Install dependencies
-      # =========================
+      # ==========================================
       - name: Install dependencies
         run: npm ci
 
-      # =========================
+      # ==========================================
       # 4. Build Quasar PWA
-      # =========================
+      # ==========================================
       - name: Build Quasar PWA
         run: npx quasar build -m pwa
 
-      # =========================
-      # 5. Setup SSH
-      # =========================
-      - name: Setup SSH
+      # ==========================================
+      # 5. Detect build output
+      # ==========================================
+      - name: Detect Quasar build directory
+        id: build
+        shell: bash
         run: |
-          mkdir -p ~/.ssh
+          set -euo pipefail
 
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          echo "=== BUILD OUTPUT ==="
+
+          if [ -d dist ]; then
+            find dist -maxdepth 4 -type f | head -50
+          else
+            echo "ERROR: Folder dist tidak ditemukan"
+            exit 1
+          fi
+
+          if [ -f "dist/pwa/index.html" ]; then
+            BUILD_DIR="dist/pwa"
+          elif [ -f "dist/pwa/www/index.html" ]; then
+            BUILD_DIR="dist/pwa/www"
+          else
+            echo "ERROR: index.html tidak ditemukan!"
+            echo "Periksa konfigurasi build Quasar."
+            exit 1
+          fi
+
+          echo "BUILD_DIR=$BUILD_DIR"
+          echo "dir=$BUILD_DIR" >> "$GITHUB_OUTPUT"
+
+          echo "=== BUILD CONTENT ==="
+          ls -lah "$BUILD_DIR"
+
+      # ==========================================
+      # 6. Setup SSH
+      # ==========================================
+      - name: Setup SSH
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
 
-          ssh-keyscan -p "${{ secrets.SERVER_PORT }}" \
-            "${{ secrets.SERVER_HOST }}" >> ~/.ssh/known_hosts
+          ssh-keyscan -H -p "$SERVER_PORT" \
+            "$SERVER_HOST" >> ~/.ssh/known_hosts
 
-      # =========================
-      # 6. Upload ke temporary
-      # =========================
+          chmod 600 ~/.ssh/known_hosts
+
+      # ==========================================
+      # 7. Upload PWA to temporary directory
+      # ==========================================
       - name: Upload PWA to temporary directory
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          BUILD_DIR: ${{ steps.build.outputs.dir }}
         run: |
-          ssh -p "${{ secrets.SERVER_PORT }}" \
-            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
-            "rm -rf /tmp/rowo-pwa-deploy && mkdir -p /tmp/rowo-pwa-deploy"
+          set -euo pipefail
+
+          echo "Uploading from: $BUILD_DIR"
+
+          ssh -p "$SERVER_PORT" \
+            "$SERVER_USER@$SERVER_HOST" \
+            "mkdir -p /tmp/rowo-pwa-deploy"
 
           rsync -az --delete \
-            -e "ssh -p ${{ secrets.SERVER_PORT }}" \
-            dist/pwa/ \
-            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/rowo-pwa-deploy/"
+            -e "ssh -p $SERVER_PORT" \
+            "$BUILD_DIR/" \
+            "$SERVER_USER@$SERVER_HOST:/tmp/rowo-pwa-deploy/"
 
-      # =========================
-      # 7. Deploy ke aaPanel
-      # =========================
-      - name: Deploy to aaPanel web root
+          echo "Upload completed."
+
+      # ==========================================
+      # 8. Verify uploaded files
+      # ==========================================
+      - name: Verify uploaded PWA
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
-          ssh -p "${{ secrets.SERVER_PORT }}" \
-            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
+          set -euo pipefail
+
+          ssh -p "$SERVER_PORT" \
+            "$SERVER_USER@$SERVER_HOST" \
+            "test -f /tmp/rowo-pwa-deploy/index.html"
+
+          echo "Uploaded PWA verified."
+
+      # ==========================================
+      # 9. Deploy to aaPanel
+      # ==========================================
+      - name: Deploy to aaPanel web root
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          set -euo pipefail
+
+          ssh -p "$SERVER_PORT" \
+            "$SERVER_USER@$SERVER_HOST" \
             "sudo rsync -a --delete \
               --chown=www:www \
               --exclude='.user.ini' \
@@ -84,8 +173,14 @@ jobs:
               /www/wwwroot/rowo.udumbara.my.id/ \
               && rm -rf /tmp/rowo-pwa-deploy"
 
-      # =========================
-      # 8. Finish
-      # =========================
+          echo "Deployment to aaPanel completed."
+
+      # ==========================================
+      # 10. Deployment completed
+      # ==========================================
       - name: Deployment completed
-        run: echo "Rowo PWA deployment completed successfully."
+        run: |
+          echo "======================================"
+          echo " SI RUKEM PWA DEPLOYMENT SUCCESSFUL"
+          echo "======================================"
+          echo "Website: https://rowo.udumbara.my.id"
