@@ -103,6 +103,8 @@ jobs:
           set -euo pipefail
 
           test -f "$BUILD_DIR/index.html"
+          test -f "$BUILD_DIR/sw.js"
+          test -f "$BUILD_DIR/manifest.json"
 
           echo "Build validation successful."
           echo "Source: $BUILD_DIR"
@@ -188,7 +190,9 @@ jobs:
 
           ssh -p "$SERVER_PORT" \
             "$SERVER_USER@$SERVER_HOST" \
-            "test -f /tmp/rowo-pwa-deploy/index.html"
+            "test -f /tmp/rowo-pwa-deploy/index.html \
+              && test -f /tmp/rowo-pwa-deploy/sw.js \
+              && test -f /tmp/rowo-pwa-deploy/manifest.json"
 
           echo "Upload verification successful."
 
@@ -228,14 +232,24 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_PORT: ${{ secrets.SERVER_PORT }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
+          BUILD_DIR: ${{ steps.build.outputs.dir }}
         run: |
           set -euo pipefail
 
           ssh -p "$SERVER_PORT" \
             "$SERVER_USER@$SERVER_HOST" \
-            "test -f /www/wwwroot/rowo.udumbara.my.id/index.html"
+            "test -f /www/wwwroot/rowo.udumbara.my.id/index.html \
+              && test -f /www/wwwroot/rowo.udumbara.my.id/sw.js \
+              && test -f /www/wwwroot/rowo.udumbara.my.id/manifest.json"
 
-          echo "Deployed index.html verified."
+          HASH_LOKAL="$(sha256sum "$BUILD_DIR/sw.js" | awk '{print $1}')"
+          HASH_SERVER="$(ssh -p "$SERVER_PORT" \
+            "$SERVER_USER@$SERVER_HOST" \
+            "sha256sum /www/wwwroot/rowo.udumbara.my.id/sw.js | awk '{print \$1}'")"
+
+          test "$HASH_LOKAL" = "$HASH_SERVER"
+
+          echo "Deployed PWA files verified."
 
       # ==========================================
       # 14. Finish
